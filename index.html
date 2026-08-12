@@ -341,268 +341,169 @@
         
     </details>
 </div>
-<h2>Cloud Calling - Deployment - Stage 2</h2>
+<h2>Webex Calling - Deployment - Stage 2</h2>
 <div class='grid'>
 
-    <details class='card card-mandatory'>
-        <summary><h3>EMEA Collab TAC Workshop'24 - Day 1, Webex Calling Deep Dive, pt 1 -Video <small>(Mandatory)</small></h3></summary>
-        <p>March 19th, 2024 - Presenters: Priyam Acharya, Vishu Gaddi. In-depth look at the solution. Topics covered are: Call Routing in Webex Calling, Administration, Integrations and Interworking.</p>
+    <details class='card card-optional'>
+        <summary><h3>Advanced Control Hub Administration <small>(Optional)</small></h3></summary>
+        <p>This module covers Control Hub administration essentials for Webex Calling deployment, including user and workspace management, location organization, and PSTN connectivity options (Cisco Calling Plan, Local Gateway, and Cloud Connected PSTN). Learn to configure users with proper licensing, manage phone numbers, and set up locations with appropriate PSTN integration for enterprise deployment.
+</p>
+        
+    </details>
+    <details class='card card-optional'>
+        <summary><h3>Core Calling Features (Voicemail, Hunt Groups) <small>(Optional)</small></h3></summary>
+        <p>This module covers core Webex Calling features available in Control Hub, including Auto Attendant, Call Queue, Hunt Groups, Call Park, Call Pickup, Paging, Receptionist Client, and Virtual Extensions. Learn feature configuration, shared voicemail groups, custom announcements, and critical cross-location limitations that restrict features to specific locations with same-location user requirements.</p>
+        
+    </details>
+    <details class='card card-optional'>
+        <summary><h3>Call Analytics & Reporting <small>(Optional)</small></h3></summary>
+        <p>This module covers administrative tools for analyzing Webex Calling operations, including Analytics dashboards (Media Quality, Detailed Call History, Call Queue, Auto Attendant), Troubleshooting for individual call investigation with quality metrics, and customizable Reports. Learn to monitor calling trends, usage patterns, performance KPIs, and identify call quality issues using latency, packet loss, and path optimization data.</p>
+        
+    </details>
+    <details class='card card-optional'>
+        <summary><h3>Call Routing Logic & Configuration <small>(Optional)</small></h3></summary>
+        <p>This module covers Webex Calling routing logic and configuration, including call sources (Webex endpoints, Local Gateway, on-premises CUCM, PSTN providers) and destinations. Learn routing scenarios, dial plan pattern matching for source identification, and critical restrictions—such as preventing PSTN tandem calls and on-premises PSTN calls to cloud PSTN. Understand how the Webex core applies routing decisions based on call origin and destination.</p>
+        
+    </details>
+    <details class='card card-optional'>
+        <summary><h3>Dialing Habits & Country Dial Plans <small>(Optional)</small></h3></summary>
+        <p>This module covers dialing habits and country dial plan implementation in Webex Calling. Learn how users dial extensions, E.164 format numbers, and various national number formats, and how the system normalizes these patterns based on location-specific country dial plans. Understand dial plan by country resources maintained by Cisco and based on ITU numbering standards for proper call routing and troubleshooting.</p>
+        
+    </details>
+    <details class='card card-optional'>
+        <summary><h3>Extensions, Location Codes & Dial Patterns <small>(Optional)</small></h3></summary>
+        <p>
+This module covers extension configuration, location codes for overlapping extensions, and dial plan implementation. Learn best practices for standardizing dialing patterns, numeric dial patterns with wildcards, and on-premises PBX integration through trunks and trunk groups.</p>
+        
+    </details>
+    <details class='card card-optional'>
+        <summary><h3>Interworking between Webex calling and UCM (On-prem) <small>(Optional)</small></h3></summary>
+        <p>This module covers Webex Calling and on-premises UCM interworking using Local Gateways and trunks. Learn registered vs. certificate trunk types, dial plan configuration for routing decisions, route groups for redundancy, and phased migration scenarios combining cloud PSTN with on-premises infrastructure across multiple sites.</p>
+        
+    </details>
+    <details class='card card-optional'>
+        <summary><h3>Data Residency & Sovereignty <small>(Optional)</small></h3></summary>
+        <p>This module covers data residency and sovereignty for Webex Calling deployments. Learn the six key questions: data residency country, calling HQ region, location addresses, default storage region, per-location overrides, and recording settings. Understand how these determine KMS key storage, analytics location, media anchoring via edge POPs, voicemail/recording storage, and compliance with regional data regulations.</p>
+        
+    </details>
+    <details class='card card-optional'>
+        <summary><h3>Media Path Optimization <small>(Optional)</small></h3></summary>
+        <p>This module covers media path optimization including regional data center connectivity, SIP signaling routing through home regions, intra-region media localization, inter-region optimized paths, ICE negotiation for direct connectivity, and edge POP selection based on geographic location.</p>
+        
+    </details>
+    <details class='card card-optional'>
+        <summary><h3>Introduction to Webex Calling Hybrid <small>(Optional)</small></h3></summary>
+        <p>This module introduces Webex Calling Hybrid, which brings cloud features and AI-powered innovation to on-premises UCM customers while maintaining control, compliance, and security.</p>
+        
+    </details>
+    <details class='card card-optional'>
+        <summary><h3>Hybrid Services: Local Gateway & Customer Assist <small>(Optional)</small></h3></summary>
+        <p>This module covers hybrid services enabling UCM and Webex Calling coexistence, including Cloud Collaboration Connector (CCC) for identity and presence sync, local gateway configurations, flexible PSTN options, and Customer Assist integration for contact center capabilities.</p>
+        
+    </details>
+    <details class='card card-optional'>
+        <summary><h3>High Availability & Security Architecture <small>(Optional)</small></h3></summary>
+        <p>This module covers high availability architecture using 3-AZ model with DNS SRV-based failover, site survivability gateways for WAN outages, security framework including TLS 1.3 encryption, data encryption at rest with KMS keys, digital signing for software integrity, and zero-trust end-to-end media encryption using MLS technology.</p>
+        
+    </details>
+    <details class='card card-optional'>
+        <summary><h3>Webex Calling Customer Assist Deep Dive - Part 1 <small>(Optional)</small></h3></summary>
+        <p>This session introduces Webex Calling Customer Assist, an extension of Webex Calling designed to provide lightweight contact center capabilities directly within the Webex App. It is ideal for branch offices, retail, healthcare, and logistics—organizations that need efficient customer service tools without the complexity of a full-fledged Contact Center-as-a-Service (CCaaS) solution.</p>
+        
+    </details>
+    <details class='card card-optional'>
+        <summary><h3>Webex Calling Customer Assist Deep Dive - Part 2 <small>(Optional)</small></h3></summary>
+        <p>This session concludes the deep dive into Webex Calling Customer Assist, focusing on advanced queue management and AI-driven productivity features. Learn how to leverage built-in AI assistants to automate note-taking and call summarization, ensuring seamless handoffs between agents. We explore upcoming innovations like real-time call sentiment analysis, which enables supervisors to intervene proactively, and advanced auto-attendant capabilities including text-to-speech and multi-level menus.</p>
+        
+    </details>
+    <details class='card card-optional'>
+        <summary><h3>CCW Configuration <small>(Optional)</small></h3></summary>
+        <p>This session provides a technical walkthrough of the Cisco Commerce Workspace (CCW) for configuring Webex Calling and Webex Suite estimates. Designed for Pre-Sales, this training covers how to build accurate Bills of Material (BOM) for both Enterprise Agreements (EA) and Named User models, including hybrid (On-Prem + Cloud) deployment scenarios.</p>
+        
+    </details>
+    <details class='card card-optional'>
+        <summary><h3>Webex Calling Licensing - Part 1 <small>(Optional)</small></h3></summary>
+        <p>This session provides an essential introduction to Webex Wholesale, a partner-centric model designed for high-velocity, high-volume service providers. Webex Wholesale offers a co-branded, monthly consumption-based experience (committed or uncommitted) that integrates seamlessly with partner billing and OSS/BSS systems via robust APIs.</p>
+        
+    </details>
+    <details class='card card-optional'>
+        <summary><h3>Webex Calling Licensing - Part 2 <small>(Optional)</small></h3></summary>
+        <p>This session continues the deep dive into Webex Wholesale, focusing on the billing model and license packaging. Webex Wholesale utilizes a fixed, predictable per-user/per-month pricing structure with monthly billing in arrears and automated proration for user additions or removals.</p>
+        
+    </details>
+    <details class='card card-optional'>
+        <summary><h3>Flex licensing <small>(Optional)</small></h3></summary>
+        <p>This session provides a comprehensive overview of Webex Flex licensing, designed to help Pre-Sales engineers navigate various buying models and deployment scenarios. Learn how to position Named User, Active User, and Enterprise Agreement models to meet diverse customer needs. We explore the value of the Webex Suite, including its AI capabilities, webinar/event tiers, and bundled features.</p>
+        
+    </details>
+    <details class='card card-optional'>
+        <summary><h3>Migration Journey - Connect to the Cloud <small>(Optional)</small></h3></summary>
+        <p>This module covers the migration journey from on-premises UCM to Webex Calling multi-tenant. Learn the "connect to the cloud" phase, discovery and assessment tools including config export, Migration Insights tool for static and dynamic analysis, and UCM APIs (AXL, BAT) for data extraction. Understand how to use third-party tools for comprehensive migration planning and readiness assessment.</p>
+        
+    </details>
+    <details class='card card-optional'>
+        <summary><h3>Migration Planning & Design <small>(Optional)</small></h3></summary>
+        <p>Assess migration readiness and understand architectural differences between UCM and Webex Calling. Learn why feature mapping fails and discover native Webex solutions like Call Queues and Virtual Lines. Master dial plan principles for simplified deployment.</p>
+        
+    </details>
+    <details class='card card-optional'>
+        <summary><h3>Phased Migration Approaches <small>(Optional)</small></h3></summary>
+        <p>Migrate at your own pace by adding subscriptions and moving users in groups without forcing a cutover. Establish seamless interworking between on-prem UCM and cloud Webex Calling via Local Gateways and dial plan routing. Learn dial plan configuration on both platforms to enable transparent connectivity and support mixed environments during transition.</p>
+        
+    </details>
+    <details class='card card-optional'>
+        <summary><h3>Migration considerations <small>(Optional)</small></h3></summary>
+        <p>This module covers critical migration decisions, comparing legacy UCM workflows with modern Webex Calling cloud-based solutions.</p>
+        
+    </details>
+    <details class='card card-optional'>
+        <summary><h3>Designing a Phased Migration <small>(Optional)</small></h3></summary>
+        <p>Learn to identify and migrate interdependent user groups to maintain critical features like BLFs, shared lines, and call pickups.</p>
+        
+    </details>
+    <details class='card card-optional'>
+        <summary><h3>Migration Tools & Utilities <small>(Optional)</small></h3></summary>
+        <p>Leverage Cisco Control Hub migration tools: Calling Migration Tool for user/device migration with batch provisioning, and Migrate Features for call queues, hunt groups, and auto attendants. Explore third-party options like Wrangler and 2key for comprehensive UCM-to-Webex configuration transformation and normalization.</p>
+        
+    </details>
+    <details class='card card-optional'>
+        <summary><h3>Phone Migration Procedures <small>(Optional)</small></h3></summary>
+        <p>Understand phone migration basics: converting Enterprise firmware to Multi-Platform (MPP) firmware on compatible 7800/8800 series phones. Learn hardware version eligibility requirements, how to verify device compatibility using Control Hub tools, and leverage automated eligibility checkers to assess your phone fleet at scale.</p>
+        
+    </details>
+    <details class='card card-optional'>
+        <summary><h3>Licensing Migration Best Practices <small>(Optional)</small></h3></summary>
+        <p>Provides guidance on managing licenses when moving devices between different tenants, emphasizing the need for new license generation in each target organization.</p>
+        
+    </details>
+    <details class='card card-optional'>
+        <summary><h3>Phone Migration & Firmware Conversion <small>(Optional)</small></h3></summary>
+        <p>Learn to navigate critical migration steps, including Customer Device Activation (CDA) and the management of device trust lists during maintenance windows.</p>
+        
+    </details>
+    <details class='card card-optional'>
+        <summary><h3>Local Gateway Integration <small>(Optional)</small></h3></summary>
+        <p>Details best practices for dial plan management, route group scalability, and selecting the appropriate trunk type for third-party SBC integrations.</p>
+        
+    </details>
+    <details class='card card-optional'>
+        <summary><h3>Log Collection & Analysis <small>(Optional)</small></h3></summary>
+        <p>This module covers network readiness assessment using the Cscan tool to validate connectivity, bandwidth, and port requirements. Details procedures for gathering logs from IP phones and the Webex App to resolve registration and quality issues. Explains packet capture techniques and log management to streamline the troubleshooting of communication problems.</p>
+        
+    </details>
+    <details class='card card-optional'>
+        <summary><h3>Common Issues & Resolution <small>(Optional)</small></h3></summary>
+        <p>This module focuses on diagnosing and resolving the four most common Webex Calling deployment issues, including firmware mismatches, license entitlement errors, and connectivity failures caused by firewall or URL filtering configurations.</p>
+        
+    </details>
+    <details class='card card-optional'>
+        <summary><h3>User management & directory sync troubleshooting <small>(Optional)</small></h3></summary>
+        <p>This module provides comprehensive guidance on troubleshooting user management and directory synchronization, covering best practices for domain verification, the transition from legacy directory connectors to cloud-native integrations, and the resolution of common provisioning issues, including the management of "soft-deleted" users and license reclamation.</p>
         
     </details>
     <details class='card card-mandatory'>
-        <summary><h3>Webex Calling Premises-based PSTN - Part 2 <small>(Mandatory)</small></h3></summary>
-        <p>Dedicated to Local Gateways within Webex Calling, this includes comprehensive platform support, licensing details, and troubleshooting examples for both registration-based and certificate-based trunking models.</p>
-        
-    </details>
-    <details class='card card-mandatory'>
-        <summary><h3>PIW - Enhanced Survivability for DI - Video <small>(Mandatory)</small></h3></summary>
-        <p>uly 13th, 2023 - Presenters: Salini Kumar, Pavithran Coiambadu Rajasekar. Enhanced Survivability has been a hot topic for deploying Cloud based calling, join us in this session as we take a deep dive into how this technology works.</p>
-        
-    </details>
-    <details class='card card-mandatory card-related'>
-        <summary><h3>Interworking between Webex Calling and Dedicated Instance Cloud Connected PSTN 1 <small>(Mandatory)</small></h3></summary>
-        <p>In this video you will learn about the specifics of the interworking between Webex Calling multi-tenant and Webex Calling dedicated instance and cloud connected PSTN for Webex Calling dedicated instance.</p>
-        <div class='tag'>Related to: Interworking between Webex Calling and Dedicated Instance Cloud Connected PSTN 2</div>
-    </details>
-    <details class='card card-mandatory card-related'>
-        <summary><h3>Peering - VOD <small>(Mandatory)</small></h3></summary>
-        <p>Options for private peering with Webex Calling multi-tenant and Dedicated Instance, with a deep dive on Edge Connect and Equinix Fabric.</p>
-        <div class='tag'>Related to: Peering</div>
-    </details>
-    <details class='card card-mandatory card-related'>
-        <summary><h3>Contact Center Integration - VOD <small>(Mandatory)</small></h3></summary>
-        <p>This video explains considerations for Contact Center integration with Webex Calling multi-tenant and Dedicated Instance, with a focus on Webex Contact Center.</p>
-        <div class='tag'>Related to: Contact Center Integration</div>
-    </details>
-    <details class='card card-mandatory card-related'>
-        <summary><h3>Migrate your Enterprise phones to MPP - Overview - VOD <small>(Mandatory)</small></h3></summary>
-        <p>You will get overview of the process to migrate Enterprise phones to MPP firmware for use with Webex Calling. We will show where to find resources, what tools are available and when to use those tools. We will also briefly cover what devices are eligible</p>
-        <div class='tag'>Related to: Migrate your Enterprise phones to MPP - Overview</div>
-    </details>
-    <details class='card card-mandatory card-related'>
-        <summary><h3>Verify device eligibility for migration to Webex Calling - VOD <small>(Mandatory)</small></h3></summary>
-        <p>You will learn how to check if your enterprise phones can migrate to MPP firmware for use with Webex calling. We will show where to find documentation for latest device eligibility information.</p>
-        <div class='tag'>Related to: Verify device eligibility for migration to Webex Calling</div>
-    </details>
-    <details class='card card-mandatory card-related'>
-        <summary><h3>Generate migration licenses first, migrate phones later. – VOD <small>(Mandatory)</small></h3></summary>
-        <p>You will learn about recent updates to the Webex control hub migration tools that enables you to generate migration licenses for your devices ahead of time and independent of the deployment method you us</p>
-        <div class='tag'>Related to: Generate migration licenses first, migrate phones later</div>
-    </details>
-    <details class='card card-mandatory card-related'>
-        <summary><h3>Auto trigger firmware migration for your UCM registered phones via CCUC. – VOD <small>(Mandatory)</small></h3></summary>
-        <p>Do you have hundreds of phones registered to UCM that need to migrate to Webex Calling? Now you can do that easily with new automatic option available in Webex control hub migration tools to complete phone migration when CCUC is already setup. </p>
-        <div class='tag'>Related to: Auto trigger firmware migration for your UCM registered phones via CCUC</div>
-    </details>
-    <details class='card card-mandatory card-related'>
-        <summary><h3>Use “Add device” UI wizard to auto generate migration license. - VOD <small>(Mandatory)</small></h3></summary>
-        <p>Ever wondered why you have to create a CSV file to migrate a phone or two for demo / trial purposes? Wouldn’t it be easier if there was a simple UI wizard for that? Well, now you can just use regular “Add device” flow to add your eligible Enterprise phone.</p>
-        <div class='tag'>Related to: Use “Add device” UI wizard to auto generate migration license</div>
-    </details>
-    <details class='card card-mandatory card-related'>
-        <summary><h3>Migrating back to Enterprise firmware - without needing a license! - VOD <small>(Mandatory)</small></h3></summary>
-        <p>You often have a need to migrate your Enterprise phones to MPP firmware and then back to enterprise firmware for a demo, lab or trial purposes. Now you can easily migrate your original Enterprise phones back that you just converted to MPP firmware.</p>
-        <div class='tag'>Related to: Migrating back to Enterprise firmware - without needing a license!</div>
-    </details>
-    <details class='card card-mandatory card-related'>
-        <summary><h3>Activation code onboarding now supported for migrated phones! - VOD <small>(Mandatory)</small></h3></summary>
-        <p>Now you have more flexibility about how you deploy your migrated phones. Either you are migrating the enterprise phone for the first time or you are repurposing it to another user within the same organisation, you can now use activation code onboarding method.</p>
-        <div class='tag'>Related to: Activation code onboarding now supported for migrated phones!</div>
-    </details>
-    <details class='card card-mandatory card-related'>
-        <summary><h3>Summary and troubleshooting tips - VOD <small>(Mandatory)</small></h3></summary>
-        <p>We will summarize various methods to migrate to give you better understanding of when to use what option. At times, things may not go as expected and we will cover few troubleshooting scenario and tips to help in those situations.</p>
-        <div class='tag'>Related to: Summary and troubleshooting tips</div>
-    </details>
-    <details class='card card-mandatory'>
-        <summary><h3>Partner Migration Tools <small>(Mandatory)</small></h3></summary>
-        <p>In this module you will learn why it is important to do pre-migration assessments and get introduced to partners that provide both Pre-Assessment and Migration services to help customers migrate from On-Prem UCM to Webex Calling Dedicated instance or Mul</p>
-        
-    </details>
-    <details class='card card-mandatory'>
-        <summary><h3>Calling Migration Tool <small>(Mandatory)</small></h3></summary>
-        <p>Introduction and walk-through of the migration tools for moving customers from Unified CM on-premise to Webex Calling. Emphasis on how to utilize the tool from start to finish, along with tips and tricks to resolve data migration errors and usage of the</p>
-        
-    </details>
-    <details class='card card-mandatory card-related'>
-        <summary><h3>Webex Setup Assist - Module 1 VOD <small>(Mandatory)</small></h3></summary>
-        <p>Introduction to Webex Setup Assist, the Service Evolution and Overview about how to order, high level engagement process with deliverables.</p>
-        <div class='tag'>Related to: Webex Setup Assist - Module 1</div>
-    </details>
-    <details class='card card-mandatory card-related'>
-        <summary><h3>Webex Setup Assist - Module 2 VOD <small>(Mandatory)</small></h3></summary>
-        <p>Webex Setup Assist is designed to be carried out in a uniform, consistent manner consisting of five distinct phases which will be covered.</p>
-        <div class='tag'>Related to: Webex Setup Assist - Module 2</div>
-    </details>
-    <details class='card card-mandatory card-related'>
-        <summary><h3>Webex Setup Assist - Module 3 VOD <small>(Mandatory)</small></h3></summary>
-        <p>We will go over the entire order to delivery process, explain each phase with pre-sales and post-sales considerations. Summarize real world lessons world for each phase from the Setup Assist migrations</p>
-        <div class='tag'>Related to: Webex Setup Assist - Module 3</div>
-    </details>
-    <details class='card card-mandatory card-related'>
-        <summary><h3>Webex Calling Migration Next Steps - Recording <small>(Mandatory)</small></h3></summary>
-        <p>How to register for the live instructor supported lab sessions "</p>
-        <div class='tag'>Related to: Webex Calling Migration Next Steps - Presentation</div>
-    </details>
-    <details class='card card-optional card-related'>
-        <summary><h3>Interworking between Webex Calling and Dedicated Instance Cloud Connected PSTN 2 <small>(Optional)</small></h3></summary>
-        <p>In this module you will learn about the specifics of the interworking between Webex Calling multi-tenant and Webex Calling dedicated instance and cloud connected PSTN for Webex Calling dedicated instance. You will specifically learn what's different betw</p>
-        <div class='tag'>Related to: Interworking between Webex Calling and Dedicated Instance Cloud Connected PSTN 1</div>
-    </details>
-    <details class='card card-optional card-related'>
-        <summary><h3>Peering <small>(Optional)</small></h3></summary>
-        <p>Options for private peering with Webex Calling multi-tenant and Dedicated Instance, with a deep dive on Edge Connect and Equinix Fabric.</p>
-        <div class='tag'>Related to: Peering - VOD</div>
-    </details>
-    <details class='card card-optional card-related'>
-        <summary><h3>Contact Center Integration <small>(Optional)</small></h3></summary>
-        <p>Considerations for Contact Center integration with Webex Calling multi-tenant and Dedicated Instance, with a focus on Webex Contact Center.</p>
-        <div class='tag'>Related to: Contact Center Integration - VOD</div>
-    </details>
-    <details class='card card-optional card-related'>
-        <summary><h3>Migrate your Enterprise phones to MPP - Overview <small>(Optional)</small></h3></summary>
-        <p>You will get overview of the process to migrate Enterprise phones to MPP firmware for use with Webex Calling. We will show where to find resources, what tools are available and when to use those tools. We will also briefly cover what devices are eligible</p>
-        <div class='tag'>Related to: Migrate your Enterprise phones to MPP - Overview - VOD</div>
-    </details>
-    <details class='card card-optional card-related'>
-        <summary><h3>Verify device eligibility for migration to Webex Calling <small>(Optional)</small></h3></summary>
-        <p>ou will learn how to check if your enterprise phones can migrate to MPP firmware for use with Webex calling. We will show where to find documentation for latest device eligibility information and what options available when you have device in hand versu</p>
-        <div class='tag'>Related to: Verify device eligibility for migration to Webex Calling - VOD</div>
-    </details>
-    <details class='card card-optional card-related'>
-        <summary><h3>Generate migration licenses first, migrate phones later <small>(Optional)</small></h3></summary>
-        <p>You will learn about recent updates to the Webex control hub migration tools that enables you to generate migration licenses for your devices ahead of time and independent of the deployment method you use. You can assign devices to users / workspace late</p>
-        <div class='tag'>Related to: Generate migration licenses first, migrate phones later. – VOD</div>
-    </details>
-    <details class='card card-optional card-related'>
-        <summary><h3>Auto trigger firmware migration for your UCM registered phones via CCUC <small>(Optional)</small></h3></summary>
-        <p>Do you have hundreds of phones registered to UCM that need to migrate to Webex Calling? Now you can do that easily with new automatic option available in Webex control hub migration tools to complete phone migration when CCUC is already setup. You will l</p>
-        <div class='tag'>Related to: Auto trigger firmware migration for your UCM registered phones via CCUC. – VOD</div>
-    </details>
-    <details class='card card-optional card-related'>
-        <summary><h3>Use “Add device” UI wizard to auto generate migration license <small>(Optional)</small></h3></summary>
-        <p>Ever wondered why you have to create a CSV file to migrate a phone or two for demo / trial purposes? Wouldn’t it be easier if there was a simple UI wizard for that? Well, now you can just use regular “Add device” flow to add your eligible Enterprise phon</p>
-        <div class='tag'>Related to: Use “Add device” UI wizard to auto generate migration license. - VOD</div>
-    </details>
-    <details class='card card-optional card-related'>
-        <summary><h3>Migrating back to Enterprise firmware - without needing a license! <small>(Optional)</small></h3></summary>
-        <p>You often have a need to migrate your Enterprise phones to MPP firmware and then back to enterprise firmware for a demo, lab or trial purposes. Now you can easily migrate your original Enterprise phones back that you just converted to MPP firmware. In th</p>
-        <div class='tag'>Related to: Migrating back to Enterprise firmware - without needing a license! - VOD</div>
-    </details>
-    <details class='card card-optional card-related'>
-        <summary><h3>Activation code onboarding now supported for migrated phones! <small>(Optional)</small></h3></summary>
-        <p>Now you have more flexibility about how you deploy your migrated phones. Either you are migrating the enterprise phone for the first time or you are repurposing it to another user within the same org, you can now use activation code onboarding method. Yo</p>
-        <div class='tag'>Related to: Activation code onboarding now supported for migrated phones! - VOD</div>
-    </details>
-    <details class='card card-optional card-related'>
-        <summary><h3>Summary and troubleshooting tips <small>(Optional)</small></h3></summary>
-        <p>We will summarize various methods to migrate to give you better understanding of when to use what option. At times, things may not go as expected and we will cover few troubleshooting scenario and tips to help in those situations.</p>
-        <div class='tag'>Related to: Summary and troubleshooting tips - VOD</div>
-    </details>
-    <details class='card card-optional card-related'>
-        <summary><h3>Webex Setup Assist - Module 1 <small>(Optional)</small></h3></summary>
-        <p>Introduction to Webex Setup Assist, the Service Evolution and Overview about how to order, high level engagement process with deliverables.</p>
-        <div class='tag'>Related to: Webex Setup Assist - Module 1 VOD</div>
-    </details>
-    <details class='card card-optional card-related'>
-        <summary><h3>Webex Setup Assist - Module 2 <small>(Optional)</small></h3></summary>
-        <p>Webex Setup Assist is designed to be carried out in a uniform, consistent manner consisting of five distinct phases which will be covered.</p>
-        <div class='tag'>Related to: Webex Setup Assist - Module 2 VOD</div>
-    </details>
-    <details class='card card-optional card-related'>
-        <summary><h3>Webex Setup Assist - Module 3 <small>(Optional)</small></h3></summary>
-        <p>We will go over the entire order to delivery process, explain each phase with pre-sales and post-sales considerations. Summarize real world lessons world for each phase from the Setup Assist migrations</p>
-        <div class='tag'>Related to: Webex Setup Assist - Module 3 VOD</div>
-    </details>
-    <details class='card card-optional card-related'>
-        <summary><h3>Webex Calling Migration Next Steps - Presentation <small>(Optional)</small></h3></summary>
-        <p>How to register for the live instructor supported lab sessions</p>
-        <div class='tag'>Related to: Webex Calling Migration Next Steps - Recording</div>
-    </details>
-    <details class='card card-mandatory'>
-        <summary><h3>Planning and Designing Successful Cloud Calling Deployments with Webex Calling <small>(Mandatory)</small></h3></summary>
-        <p>This session covers cloud calling deployment including PSTN selection, location planning, dial plan design, integrations with existing call control systems and mapping business requirements to Webex Calling features.</p>
-        
-    </details>
-    <details class='card card-mandatory'>
-        <summary><h3>Webex Edge Connect Design and Deployment for Webex Meetings and Calling <small>(Mandatory)</small></h3></summary>
-        <p> In this session we'll review the Edge Connect solution, cover some of the key design considerations and deployment best practices and discuss some of the latest updates to the offering.</p>
-        
-    </details>
-    <details class='card card-mandatory'>
-        <summary><h3>Media Optimization with Webex Calling <small>(Mandatory)</small></h3></summary>
-        <p>This session will outline the media flow in the different implementation scenarios and give an overview of the methods and tools available to customers to troubleshoot voice quality issues</p>
-        
-    </details>
-    <details class='card card-mandatory'>
-        <summary><h3>EMEA Collab TAC Workshop'24-Day 1, Webex Calling Premises-based PSTN, pt 1-Video <small>(Mandatory)</small></h3></summary>
-        <p>March 19th, 2024 - Presenters: Rado Drabik, Dominik Dyrcz. Part 1 of a 1,5 hours session dedicated to Local Gateways with platform support, licensing and troubleshooting examples. Both registration-based and certificate-based.</p>
-        
-    </details>
-    <details class='card card-mandatory card-related'>
-        <summary><h3>EMEA Collab TAC Workshop'24-Day 1, Webex Calling Premises-based PSTN, pt 2-Video <small>(Mandatory)</small></h3></summary>
-        <p>March 19th, 2024 - Presenters: Rado Drabik, Dominik Dyrcz. Part 2 of a 1,5 hours session dedicated to Local Gateways with platform support, licensing and troubleshooting examples. Both registration-based and certificate-based. [Full Title: EMEA Collabora</p>
-        <div class='tag'>Related to: EMEA Collab TAC Workshop'24-Day 1, Webex Calling Premises-based PSTN, pt 1-Video</div>
-    </details>
-    <details class='card card-mandatory'>
-        <summary><h3>EMEA Collab TAC Workshop'24 - Day 2, Enabling Endpoints for Webex Calling-Video <small>(Mandatory)</small></h3></summary>
-        <p>March 20th, 2024 - Presenters: Dariya Makhanova, Diego Manuel Jimenez Moreno. Manual and bulk provisioning flows for Webex Calling devices. Troubleshooting common issues. [Full Title: EMEA Collaboration TAC Workshop'24 - Day 2, Enabling Endpoints for Webex Calling
-Estimated module completion time: 54 mins</p>
-        
-    </details>
-    <details class='card card-mandatory'>
-        <summary><h3>Webex_Calling_Locations.mp4 <small>(Mandatory)</small></h3></summary>
-        <p>This video explains the recent feature added to control Hub, which allows to organize users based on the physical location.</p>
-        
-    </details>
-    <details class='card card-mandatory'>
-        <summary><h3>Call plans for small business: See the simple setup process <small>(Mandatory)</small></h3></summary>
-        <p>Webex is making calling easier and more accessible than ever. The Call plans, now available on Webex.com, provide powerful, enterprise-grade calling service, designed for your small business. Watch this demo to experience the setup process: how to assign</p>
-        
-    </details>
-    <details class='card card-mandatory'>
-        <summary><h3>Cloud Connect for Webex Calling - Global availability <small>(Mandatory)</small></h3></summary>
-        <p>This excel file shows the geographic coverage of Certified Calling Providers for Cloud Connect for Webex Calling.</p>
-        
-    </details>
-    <details class='card card-mandatory'>
-        <summary><h3>Nomadic E911 Solution for Webex At-a-Glance <small>(Mandatory)</small></h3></summary>
-        <p>This at-a-glance provides an overview of the new Nomadic E911 solution being provided, in partnership with RedSky, for U.S. users of Webex Calling, Dedicated Instance for Webex Calling, UCM Cloud and UCM Cloud for Government. </p>
-        
-    </details>
-    <details class='card card-mandatory'>
-        <summary><h3>Business texting for Webex Calling At-a-glance <small>(Mandatory)</small></h3></summary>
-        <p>We're excited to announce that Business Texting is available with Webex Calling. This feature supports secure, compliant, person-to-person texting in the Webex App. Business texting is included with Cisco Calling Plans in the United States and Canada for</p>
-        
-    </details>
-    <details class='card card-mandatory'>
-        <summary><h3>Webex Calling for Chrome At-a-glance <small>(Mandatory)</small></h3></summary>
-        <p>Deliver the enterprise-grade Webex Calling experience from Google Chrome.</p>
-        
-    </details>
-    <details class='card card-mandatory'>
-        <summary><h3>Cisco Dubber Go - One Pager <small>(Mandatory)</small></h3></summary>
-        <p>Dubber Go - a simple and cost effective call recording One Pager Summary</p>
-        
-    </details>
-    <details class='card card-mandatory'>
-        <summary><h3>Webex Calling Lab v5 <small>(Mandatory)</small></h3></summary>
-        <p>n the Webex Calling lab, you will take a hands-on approach to enable an organization and users in Webex Control Hub, as well as onboard endpoints and room systems.</p>
-        
-    </details>
-    <details class='card card-mandatory'>
-        <summary><h3>Migrating On-Premises Calling to Cisco Webex Lab v3 <small>(Mandatory)</small></h3></summary>
-        <p>The lab covers: Configuring Okta for SSO, Touch-less Headset Extension Mobility, Webex Calling, Calling in Webex (Unified CM), Hybrid Messaging, Device Onboarding using Activation Codes, Jabber Migration, Calling Migration and more.</p>
-        
-    </details>
-    <details class='card card-mandatory'>
-        <summary><h3>Black Belt - Cloud Calling Deployment Stage 2 Quiz <small>(Mandatory)</small></h3></summary>
+        <summary><h3>Black Belt Webex Calling Deployment Stage 2 Assessment <small>(Mandatory)</small></h3></summary>
         <p></p>
-        
-    </details>
-    <details class='card card-mandatory'>
-        <summary><h3>Black Belt Cloud Calling Deployment Stage 2 Submission Guidelines <small>(Mandatory)</small></h3></summary>
-        <p>Submission Guidelines document for the completion of Black Belt Cloud Calling Deployment Stage 2 Learning Plan</p>
         
     </details>
 </div>
