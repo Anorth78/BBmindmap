@@ -5,30 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Interactive Mind Map</title>
     <style>
-        html, body { width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden; font-family: sans-serif; }
-        /* Make the automatic mind map container fill the whole browser tab */
+        html, body { width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden; }
         .markmap { width: 100vw; height: 100vh; }
     </style>
-    <!-- Load the official autoloader script directly from the web -->
-    <script src="https://jsdelivr.net"></script>
+    <!-- Load the official markmap autoloader -->
+    <script src="https://cdn.jsdelivr.net/npm/markmap-autoloader"></script>
 </head>
 <body>
-    <!-- The autoloader automatically turns this class into an interactive mind map -->
     <div class="markmap">
-        <h1>Cell-Specific Mind Map</h1>
-<h2>260518_Black_Belt_Webex_Calling_Pre-Sales_Stage_1_(May_2026).xlsx</h2>
-<h3>Pre-Sales</h3>
-<pre><code>- Webex Calling Introduction
-- Administration with Control Hub
-- Webex Calling BDM
-- Webex Calling Architecture Overview
-- Webex Calling Customer Assist overview
-- PSTN Connectivity Options
-- Calling Regions
-- Location Consideration
-- Why lead with Webex Calling
-- Black Belt Webex Calling Pre-Sales Stage 1 Assessment
-</code></pre>
+        <script type="text/template">
+# Cell-Specific Mind Map
+## 260518_Black_Belt_Webex_Calling_Pre-Sales_Stage_1_(May_2026).xlsx
+### Pre-Sales
+    - Webex Calling Introduction
+    - Administration with Control Hub
+    - Webex Calling BDM
+    - Webex Calling Architecture Overview
+    - Webex Calling Customer Assist overview
+    - PSTN Connectivity Options
+    - Calling Regions
+    - Location Consideration
+    - Why lead with Webex Calling
+    - Black Belt Webex Calling Pre-Sales Stage 1 Assessment
+
+        </script>
     </div>
 </body>
 </html>
