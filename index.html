@@ -1,2487 +1,1938 @@
-
 <!DOCTYPE html>
-
 <html>
-
 <head>
-
-<meta charset="UTF-8">
-
-<meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
->
-
-<title>
-Collaboration Mind Map
-</title>
-
-
-<style>
-
-* {
-    box-sizing: border-box;
-}
-
-
-html,
-body {
-
-    margin: 0;
-    padding: 0;
-
-    width: 100%;
-    height: 100%;
-
-    overflow: hidden;
-
-    font-family:
-        Arial,
-        Helvetica,
-        sans-serif;
-
-    background:
-        #f3f6f8;
-}
-
-
-/* ============================================================
-   HEADER
-   ============================================================ */
-
-#header {
-
-    position: fixed;
-
-    top: 0;
-    left: 0;
-    right: 0;
-
-    height: 62px;
-
-    background:
-        #005073;
-
-    color: white;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: space-between;
-
-    padding:
-        0 18px;
-
-    z-index: 10000;
-}
-
-
-#header h1 {
-
-    margin: 0;
-
-    font-size: 21px;
-}
-
-
-#buttons {
-
-    display: flex;
-
-    gap: 6px;
-}
-
-
-#buttons button {
-
-    border: none;
-
-    border-radius: 5px;
-
-    background: white;
-
-    color: #005073;
-
-    padding:
-        8px 14px;
-
-    font-weight: bold;
-
-    cursor: pointer;
-}
-
-
-#buttons button:hover {
-
-    background:
-        #e2f0f4;
-}
-
-
-/* ============================================================
-   MAP
-   ============================================================ */
-
-#map {
-
-    position: fixed;
-
-    top: 62px;
-    left: 0;
-    right: 0;
-    bottom: 0;
-
-    overflow: hidden;
-
-    cursor: grab;
-}
-
-
-#map.dragging {
-
-    cursor: grabbing;
-}
-
-
-#world {
-
-    position: absolute;
-
-    left: 0;
-    top: 0;
-
-    width: 1px;
-    height: 1px;
-
-    transform-origin:
-        0 0;
-}
-
-
-/* ============================================================
-   SVG
-   ============================================================ */
-
-#line-layer {
-
-    position: absolute;
-
-    left: 0;
-    top: 0;
-
-    width: 1px;
-    height: 1px;
-
-    overflow: visible;
-
-    pointer-events: none;
-}
-
-
-.line {
-
-    fill: none;
-
-    stroke-linecap: round;
-}
-
-
-.line1 {
-    stroke: #005073;
-    stroke-width: 7;
-}
-
-
-.line2 {
-    stroke: #4d91a8;
-    stroke-width: 5;
-}
-
-
-.line3 {
-    stroke: #8eafb9;
-    stroke-width: 4;
-}
-
-
-.line4 {
-    stroke: #c4cdd1;
-    stroke-width: 2.5;
-}
-
-
-/* ============================================================
-   NODES
-   ============================================================ */
-
-.node {
-
-    position: absolute;
-
-    transform:
-        translate(
-            -50%,
-            -50%
-        );
-
-    border-radius: 50%;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    text-align: center;
-
-    padding: 10px;
-
-    cursor: pointer;
-
-    user-select: none;
-
-    transition:
-        box-shadow .15s ease,
-        transform .15s ease;
-}
-
-
-.node:hover {
-
-    transform:
-        translate(
-            -50%,
-            -50%
-        )
-        scale(1.06);
-}
-
-
-.node.hidden {
-
-    display: none;
-}
-
-
-/* ============================================================
-   ROOT
-   ============================================================ */
-
-.node.level0 {
-
-    width: 190px;
-    height: 190px;
-
-    background:
-        #005073;
-
-    color: white;
-
-    border:
-        8px solid white;
-
-    font-size: 22px;
-
-    font-weight: bold;
-
-    z-index: 5000;
-
-    box-shadow:
-        0 8px 30px
-        rgba(
-            0,
-            0,
-            0,
-            .30
-        );
-}
-
-
-.node.level0.collapsed {
-
-    box-shadow:
-        0 0 0 12px
-        rgba(
-            0,
-            80,
-            115,
-            .18
-        ),
-        0 8px 30px
-        rgba(
-            0,
-            0,
-            0,
-            .30
-        );
-}
-
-
-/* ============================================================
-   CATEGORY
-   ============================================================ */
-
-.node.level1 {
-
-    width: 155px;
-    height: 155px;
-
-    background:
-        #0076a8;
-
-    color: white;
-
-    border:
-        6px solid white;
-
-    font-size: 15px;
-
-    font-weight: bold;
-
-    z-index: 4000;
-}
-
-
-/* ============================================================
-   SUBCATEGORY
-   ============================================================ */
-
-.node.level2 {
-
-    width: 130px;
-    height: 130px;
-
-    background:
-        #5799af;
-
-    color: white;
-
-    border:
-        5px solid white;
-
-    font-size: 13px;
-
-    font-weight: bold;
-
-    z-index: 3500;
-}
-
-
-/* ============================================================
-   STAGE
-   ============================================================ */
-
-.node.level3 {
-
-    width: 140px;
-    height: 140px;
-
-    background:
-        #dcebef;
-
-    color:
-        #003d52;
-
-    border:
-        6px solid white;
-
-    font-size: 12px;
-
-    font-weight: bold;
-
-    font-style: italic;
-
-    z-index: 4500;
-}
-
-
-/* ============================================================
-   MODULE
-   ============================================================ */
-
-.node.level4 {
-
-    width: 110px;
-    height: 110px;
-
-    background:
-        white;
-
-    color:
-        #333;
-
-    border:
-        4px solid #c4cdd1;
-
-    font-size: 10.5px;
-
-    z-index: 3000;
-
-    box-shadow:
-        0 3px 10px
-        rgba(
-            0,
-            0,
-            0,
-            .12
-        );
-}
-
-
-.node.level4.mandatory {
-
-    border-color:
-        #d9534f;
-}
-
-
-.node.level4.optional {
-
-    border-color:
-        #5cb85c;
-}
-
-
-.node.level4.related {
-
-    border-color:
-        #6f42c1;
-
-    background:
-        #f8f5ff;
-}
-
-
-/* ============================================================
-   TOOLTIP
-   ============================================================ */
-
-#tooltip {
-
-    position: fixed;
-
-    display: none;
-
-    max-width: 420px;
-
-    background:
-        rgba(
-            25,
-            25,
-            25,
-            .96
-        );
-
-    color: white;
-
-    padding: 15px;
-
-    border-radius: 8px;
-
-    z-index: 20000;
-
-    pointer-events: none;
-
-    font-size: 13px;
-
-    line-height: 1.45;
-
-    box-shadow:
-        0 5px 25px
-        rgba(
-            0,
-            0,
-            0,
-            .35
-        );
-}
-
-
-.tooltip-title {
-
-    font-size: 16px;
-
-    font-weight: bold;
-
-    margin-bottom: 8px;
-}
-
-
-.tooltip-related {
-
-    border-top:
-        1px solid #666;
-
-    margin-top: 10px;
-
-    padding-top: 10px;
-}
-
-
-/* ============================================================
-   LEGEND
-   ============================================================ */
-
-#legend {
-
-    position: fixed;
-
-    left: 18px;
-    bottom: 18px;
-
-    background:
-        white;
-
-    padding:
-        12px 15px;
-
-    border-radius: 8px;
-
-    z-index: 10000;
-
-    font-size: 12px;
-
-    box-shadow:
-        0 3px 15px
-        rgba(
-            0,
-            0,
-            0,
-            .15
-        );
-}
-
-
-.legend-title {
-
-    font-weight: bold;
-
-    margin-bottom: 7px;
-}
-
-
-.legend-row {
-
-    margin: 5px 0;
-}
-
-
-.dot {
-
-    display: inline-block;
-
-    width: 12px;
-    height: 12px;
-
-    border-radius: 50%;
-
-    margin-right: 6px;
-}
-
-
-.red {
-    background: #d9534f;
-}
-
-
-.green {
-    background: #5cb85c;
-}
-
-
-.purple {
-    background: #6f42c1;
-}
-
-
-/* ============================================================
-   INSTRUCTIONS
-   ============================================================ */
-
-#instructions {
-
-    position: fixed;
-
-    right: 18px;
-    bottom: 18px;
-
-    background:
-        white;
-
-    padding:
-        10px 14px;
-
-    border-radius: 7px;
-
-    z-index: 10000;
-
-    font-size: 11px;
-
-    color:
-        #555;
-
-    box-shadow:
-        0 3px 12px
-        rgba(
-            0,
-            0,
-            0,
-            .12
-        );
-}
-
-</style>
-
+    <style>
+        body { font-family: sans-serif; padding: 20px; background: #f4f7f9; }
+        .lvl1 { background: #005073; color: white; padding: 15px; border: none; width: 100%; text-align: left; margin-bottom: 5px; cursor: pointer; font-weight: bold; }
+        .lvl2 { background: #d1d1d1; padding: 12px; border: none; width: 95%; margin-left: 5%; margin-bottom: 5px; cursor: pointer; text-align: left; }
+        .lvl3 { background: #e9e9e9; padding: 10px; border: none; width: 90%; margin-left: 10%; margin-bottom: 5px; cursor: pointer; text-align: left; font-style: italic; }
+        .card-container { margin-left: 15%; display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px; padding: 10px; }
+        .card { background: white; padding: 15px; border-radius: 8px; border-left: 8px solid #ccc; }
+        .card-mandatory { border-left-color: #d9534f; }
+        .card-optional { border-left-color: #5cb85c; }
+        .card-related { border-left-color: #6f42c1; background-color: #f8f5ff; }
+        .tag { font-size: 0.8em; background: #6f42c1; color: white; padding: 5px; border-radius: 4px; display: inline-block; margin-top: 10px; }
+        .tag small { color: #e0e0e0; font-size: 0.9em; }
+    </style>
 </head>
-
-
 <body>
-
-
-<div id="header">
-
-    <h1>
-        Collaboration Mind Map
-    </h1>
-
-    <div id="buttons">
-
-        <button id="reset">
-            Reset
-        </button>
-
-        <button id="minus">
-            −
-        </button>
-
-        <button id="plus">
-            +
-        </button>
-
-        <button id="fit">
-            Fit
-        </button>
-
+    <h1>Collaboration Map</h1>
+    <button class='lvl1' onclick='toggleVisibility("Category")'>Category</button>
+<div id='Category' class='container' style='display:none;'>
+  <button class='lvl2' onclick='toggleVisibility("Category_Sub-Category")'>Sub-Category</button>
+  <div id='Category_Sub-Category' class='container' style='display:none;'>
+    <button class='lvl3' onclick='toggleVisibility("Category_Sub-Category_Section")'>Section</button>
+    <div id='Category_Sub-Category_Section' class='card-container' style='display:none;'>
+      <details class='card card-optional'>
+        <summary><h3>  <small>(Cisco sase strategy: securely connecting the future​)</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-mandatory'>
+        <summary><h3>  <small>(Mandatory)</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>(Positioning meraki sase)</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-mandatory'>
+        <summary><h3>  <small>(Mandatory)</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>(Cisco secure connect introduction)</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-mandatory'>
+        <summary><h3>  <small>(Mandatory)</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>(Implementing esl technology with meraki-managed wireless)</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-mandatory'>
+        <summary><h3>  <small>(Mandatory)</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>(Enhancing wireless networks with wi-fi personal network)</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>(Meraki support stage 3 quiz)</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>(Blackbelt support meraki stage 1 quiz)</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-mandatory'>
+        <summary><h3>  <small>(Mandatory)</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>(Blackbelt support meraki stage 1 quiz)</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-mandatory'>
+        <summary><h3>  <small>(Mandatory)</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-mandatory'>
+        <summary><h3>  <small>(Mandatory)</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>(Part 1 understanding cisco private cloud contact center enterprise offering wcce)</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>(Part 2 understanding cisco private cloud contact center enterprise offering wcce)</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>(Part 3 understanding cisco private cloud contact center enterprise offering wcce)</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-mandatory'>
+        <summary><h3>  <small>(Mandatory)</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>(Webex_contact_center_enterprise_support_stage_2_quiz)</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-mandatory'>
+        <summary><h3>  <small>(Mandatory)</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>(Enable_your_contact_center_with_intelligent_data_agenda)</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-mandatory'>
+        <summary><h3>  <small>(Mandatory)</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>(﻿webex_contact_center_simple_demo_kit_-_foundational_part)</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>(Black belt webex contact center enterprise support stage 2 quiz)</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>  <small>()</small></h3></summary>
+        <p></p>
+        
+      </details>
     </div>
-
+  </div>
+</div>
+<button class='lvl1' onclick='toggleVisibility("Support")'>Support</button>
+<div id='Support' class='container' style='display:none;'>
+  <button class='lvl2' onclick='toggleVisibility("Support_UCS")'>UCS</button>
+  <div id='Support_UCS' class='container' style='display:none;'>
+    <button class='lvl3' onclick='toggleVisibility("Support_UCS_Stage_3")'>Stage 3</button>
+    <div id='Support_UCS_Stage_3' class='card-container' style='display:none;'>
+      <details class='card card-optional card-related'>
+        <summary><h3>X - Series Automation With Intersight And Ansible <small>(Optional)</small></h3></summary>
+        <p>This pdf will talk about Multipod troubleshooting and insights</p>
+        <div class='tag'>Related to: ACI Troubleshooting Multipod <br><small>Path: Support > Application Centric Infrastructure (ACI) > Stage 3</small></div>
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>Automation With Ucs X-Series Leveraging Cisco Intersight And Ansible <small>(Optional)</small></h3></summary>
+        <p> In this blog, we will go through Automation with UCS X-Series leveraging Cisco Intersight and Ansible</p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>Modernize Apps And Infrastructure Across The Hybrid Cloud With Cisco Ucs X - Series <small>(Optional)</small></h3></summary>
+        <p>In this video, we will learn to modernize apps and infrastructure across the hybrid cloud with Cisco UCS X-Series</p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>Modernize Workloads with Cisco UCS X-Series And Red Hat OpenShift <small>(Optional)</small></h3></summary>
+        <p>In this blog, we will learn how to modernize workloads with Cisco UCS X-Series And Red Hat OpenShift</p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>Deploy Red Hat Openshift OCP On Ucs-X Series <small>(Optional)</small></h3></summary>
+        <p>In this video, we will go through how to deploy Red Hat OpenShift OCP on UCS-X Series</p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>Unleash the Power of Converged Infrastructure Using Cisco Intersight and UCS X-Series <small>(Optional)</small></h3></summary>
+        <p>In this video, we will go learn how to unleash the power of Converged Infrastructure using Cisco Intersight and UCS X-Series.</p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>Cisco Converged Infrastructure Overview : FlexPod <small>(Optional)</small></h3></summary>
+        <p> In this pdf, we will go through Cisco Converged Infrastructure Overview : FlexPod.</p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>NetApp and Cisco Winning Together: FlexPod with X-Series <small>(Optional)</small></h3></summary>
+        <p>Watch the recording of the March Winning Together to learn more about FlexPod on UCS X-Series.</p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>Cisco Converged Infrastructure Overview : FlashStack <small>(Optional)</small></h3></summary>
+        <p>In this PDF we will learn Cisco Converged Infrastructure Overview - FlashStack</p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>What's New in FlashStack and a Look into the Future <small>(Optional)</small></h3></summary>
+        <p> In this video, we can learn what's New in FlashStack and its look into the future</p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>Pervasive Visibility across FlashStack Infrastructure with Cisco UCS & Intersight <small>(Optional)</small></h3></summary>
+        <p>In this video, we will see pervasive visibility across FlashStack Infrastructure with Cisco UCS & Intersight.</p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>FlashStack on UCS X-Series Demo <small>(Optional)</small></h3></summary>
+        <p>In this video, we will go through FlashStack on UCS X-Series Demo.</p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>Part 1 Mastering Cisco Ucs Innovations , Best Practices And Troubleshooting <small>(Optional)</small></h3></summary>
+        <p>This section provides a comprehensive overview of the Cisco Unified Computing System (UCS) architecture and its integration with Cisco Intersight, Cisco’s cloud-based infrastructure management platform. </p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>Part 2 Mastering Cisco Ucs Innovations , Best Practices And Troubleshooting <small>(Optional)</small></h3></summary>
+        <p>This section focuses deeply on hardware-level troubleshooting, starting with the power and cooling subsystems within UCS infrastructure.</p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>Part 3 Mastering Cisco Ucs Innovations , Best Practices And Troubleshooting <small>(Optional)</small></h3></summary>
+        <p>The section explains about policy-level misconfigurations, firmware-related challenges, and advanced Intersight diagnostics. </p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>FlexPod Datacenter with Cisco UCS X-Series White Paper <small>(Optional)</small></h3></summary>
+        <p>This FlexPod Datacenter with Cisco X-series white paper provides design guidance around incorporating the Cisco Intersight—managed UCS X-Series platform within FlexPod Datacenter infrastructure. Powered by the Cisco Intersight cloud-operations platform.</p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>FlashStack with Cisco UCS X-Series and Cisco Intersight <small>(Optional)</small></h3></summary>
+        <p>This document provides design guidance around incorporating the Cisco Intersight software-managed Cisco UCS X-Series platform within the FlashStack solution.</p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>FlashStack Virtual Server Infrastructure with Cisco UCS X-Series - CVD <small>(Optional)</small></h3></summary>
+        <p>In this CVD we will go through FlashStack Virtual server infrastructure with Cisco UCS X-Series and VMware 7.0 U2 design guide.</p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>FlexPod Datacenter with Cisco UCS X-Series - CVD <small>(Optional)</small></h3></summary>
+        <p>In this CVD we will go through FlexPod Datacenter with Cisco UCS X-Series - CVD.</p>
+        
+      </details>
+      <details class='card card-mandatory card-related'>
+        <summary><h3>Black Belt UCS Support Stage 3 Quiz <small>(Mandatory)</small></h3></summary>
+        <p>This assesment test the knowldege of the participants who have gone through this learning series</p>
+        <div class='tag'>Related to: Black Belt VPN Support Stage 3 Quiz <br><small>Path: Support > VPN > Stage 3</small></div>
+      </details>
+    </div>
+  </div>
+  <button class='lvl2' onclick='toggleVisibility("Support_Application_Centric_Infrastructure_(ACI)")'>Application Centric Infrastructure (ACI)</button>
+  <div id='Support_Application_Centric_Infrastructure_(ACI)' class='container' style='display:none;'>
+    <button class='lvl3' onclick='toggleVisibility("Support_Application_Centric_Infrastructure_(ACI)_Stage_3")'>Stage 3</button>
+    <div id='Support_Application_Centric_Infrastructure_(ACI)_Stage_3' class='card-container' style='display:none;'>
+      <details class='card card-mandatory card-related'>
+        <summary><h3>ACI Troubleshooting Multipod <small>(Mandatory)</small></h3></summary>
+        <p>This pdf will talk about Multipod troubleshooting and insights</p>
+        <div class='tag'>Related to: X - Series Automation With Intersight And Ansible <br><small>Path: Support > UCS > Stage 3</small></div>
+      </details>
+      <details class='card card-mandatory card-related'>
+        <summary><h3>Multipod Overview <small>(Mandatory)</small></h3></summary>
+        <p>This video will talk about Multipod troubleshooting and insights</p>
+        <div class='tag'>Related to: X - Series Automation With Intersight And Ansible <br><small>Path: Support > UCS > Stage 3</small></div>
+      </details>
+      <details class='card card-mandatory card-related'>
+        <summary><h3>Troubleshooting Unicast Flows <small>(Mandatory)</small></h3></summary>
+        <p>This video provide insights on troubleshooting unicast flows </p>
+        <div class='tag'>Related to: Troubleshooting Multidestination Flows <br><small>Path: Support > Application Centric Infrastructure (ACI) > Stage 3</small></div>
+      </details>
+      <details class='card card-mandatory card-related'>
+        <summary><h3>Troubleshooting Multidestination Flows <small>(Mandatory)</small></h3></summary>
+        <p>This video provide insights on troubleshooting multidestination flows </p>
+        <div class='tag'>Related to: Troubleshooting Unicast Flows <br><small>Path: Support > Application Centric Infrastructure (ACI) > Stage 3</small></div>
+      </details>
+      <details class='card card-mandatory card-related'>
+        <summary><h3>Quality of Service <small>(Mandatory)</small></h3></summary>
+        <p>This video provide insights on QOS troubleshooting</p>
+        <div class='tag'>Related to: Troubleshooting Unicast Flows <br><small>Path: Support > Application Centric Infrastructure (ACI) > Stage 3</small></div>
+      </details>
+      <details class='card card-mandatory'>
+        <summary><h3>Troubleshooting the Multipod Setup <small>(Mandatory)</small></h3></summary>
+        <p>This video will provide you insights on troubleshooting the multipod setup</p>
+        
+      </details>
+      <details class='card card-mandatory card-related'>
+        <summary><h3>ACI Troubleshooting A deep dive into PBR <small>(Mandatory)</small></h3></summary>
+        <p>This pdf talks about troubleshooting PBR</p>
+        <div class='tag'>Related to: Part 1 - ACI Troubleshooting A deep dive into PBR <br><small>Path: Support > Application Centric Infrastructure (ACI) > Stage 3</small></div>
+      </details>
+      <details class='card card-mandatory card-related'>
+        <summary><h3>Part 1 - ACI Troubleshooting A deep dive into PBR <small>(Mandatory)</small></h3></summary>
+        <p>This video talks about troubleshooting PBR</p>
+        <div class='tag'>Related to: ACI Troubleshooting A deep dive into PBR <br><small>Path: Support > Application Centric Infrastructure (ACI) > Stage 3</small></div>
+      </details>
+      <details class='card card-mandatory card-related'>
+        <summary><h3>Part 2 - ACI Troubleshooting A deep dive into PBR <small>(Mandatory)</small></h3></summary>
+        <p>This video talks about troubleshooting PBR</p>
+        <div class='tag'>Related to: ACI Troubleshooting A deep dive into PBR <br><small>Path: Support > Application Centric Infrastructure (ACI) > Stage 3</small></div>
+      </details>
+      <details class='card card-mandatory card-related'>
+        <summary><h3>Part 3 - ACI Troubleshooting A deep dive into PBR <small>(Mandatory)</small></h3></summary>
+        <p>This video talks about troubleshooting PBR</p>
+        <div class='tag'>Related to: ACI Troubleshooting A deep dive into PBR <br><small>Path: Support > Application Centric Infrastructure (ACI) > Stage 3</small></div>
+      </details>
+      <details class='card card-mandatory card-related'>
+        <summary><h3>Part 4 - ACI Troubleshooting A deep dive into PBR <small>(Mandatory)</small></h3></summary>
+        <p>This video talks about troubleshooting PBR</p>
+        <div class='tag'>Related to: ACI Troubleshooting A deep dive into PBR <br><small>Path: Support > Application Centric Infrastructure (ACI) > Stage 3</small></div>
+      </details>
+      <details class='card card-mandatory card-related'>
+        <summary><h3>Part 1 - Aci Troubleshooting Advanced L3Out Features <small>(Mandatory)</small></h3></summary>
+        <p>This video talks about advanced L3 out features</p>
+        <div class='tag'>Related to: Part 2 - Aci Troubleshooting Advanced L3Out Features <br><small>Path: Support > Application Centric Infrastructure (ACI) > Stage 3</small></div>
+      </details>
+      <details class='card card-mandatory card-related'>
+        <summary><h3>Part 2 - Aci Troubleshooting Advanced L3Out Features <small>(Mandatory)</small></h3></summary>
+        <p>This video talks about advanced L3 out features</p>
+        <div class='tag'>Related to: Part 1 - Aci Troubleshooting Advanced L3Out Features <br><small>Path: Support > Application Centric Infrastructure (ACI) > Stage 3</small></div>
+      </details>
+      <details class='card card-mandatory card-related'>
+        <summary><h3>Part 3 - Aci Troubleshooting Advanced L3Out Features <small>(Mandatory)</small></h3></summary>
+        <p>This video talks about advanced L3 out features</p>
+        <div class='tag'>Related to: Part 1 - Aci Troubleshooting Advanced L3Out Features <br><small>Path: Support > Application Centric Infrastructure (ACI) > Stage 3</small></div>
+      </details>
+      <details class='card card-mandatory card-related'>
+        <summary><h3>Aci Advanced L3Out Features <small>(Mandatory)</small></h3></summary>
+        <p>This PDF talks about advanced L3 out features</p>
+        <div class='tag'>Related to: Part 1 - Aci Troubleshooting Advanced L3Out Features <br><small>Path: Support > Application Centric Infrastructure (ACI) > Stage 3</small></div>
+      </details>
+      <details class='card card-mandatory card-related'>
+        <summary><h3>Aci Troubleshooting With Nexus Dashboard Insights <small>(Mandatory)</small></h3></summary>
+        <p>This PDF gives us insights on NDI capabilities while troubleshooting ACI</p>
+        <div class='tag'>Related to: Part 1 Aci Troubleshooting With Nexus Dashboard Insights <br><small>Path: Support > Application Centric Infrastructure (ACI) > Stage 3</small></div>
+      </details>
+      <details class='card card-mandatory card-related'>
+        <summary><h3>Part 1 Aci Troubleshooting With Nexus Dashboard Insights <small>(Mandatory)</small></h3></summary>
+        <p>This video gives us insights on NDI capabilities while troubleshooting ACI</p>
+        <div class='tag'>Related to: Aci Troubleshooting With Nexus Dashboard Insights <br><small>Path: Support > Application Centric Infrastructure (ACI) > Stage 3</small></div>
+      </details>
+      <details class='card card-mandatory card-related'>
+        <summary><h3>Part 2 Aci Troubleshooting With Nexus Dashboard Insights <small>(Mandatory)</small></h3></summary>
+        <p>This video gives us insights on NDI capabilities while troubleshooting ACI</p>
+        <div class='tag'>Related to: Aci Troubleshooting With Nexus Dashboard Insights <br><small>Path: Support > Application Centric Infrastructure (ACI) > Stage 3</small></div>
+      </details>
+      <details class='card card-mandatory card-related'>
+        <summary><h3>Part 3 Aci Troubleshooting With Nexus Dashboard Insights <small>(Mandatory)</small></h3></summary>
+        <p>This video gives us insights on NDI capabilities while troubleshooting ACI</p>
+        <div class='tag'>Related to: Aci Troubleshooting With Nexus Dashboard Insights <br><small>Path: Support > Application Centric Infrastructure (ACI) > Stage 3</small></div>
+      </details>
+      <details class='card card-mandatory card-related'>
+        <summary><h3>Part 4 Aci Troubleshooting With Nexus Dashboard Insights <small>(Mandatory)</small></h3></summary>
+        <p>This video gives us insights on NDI capabilities while troubleshooting ACI</p>
+        <div class='tag'>Related to: Aci Troubleshooting With Nexus Dashboard Insights <br><small>Path: Support > Application Centric Infrastructure (ACI) > Stage 3</small></div>
+      </details>
+      <details class='card card-mandatory card-related'>
+        <summary><h3>Part 5 Aci Troubleshooting With Nexus Dashboard Insights <small>(Mandatory)</small></h3></summary>
+        <p>This video gives us insights on NDI capabilities while troubleshooting ACI</p>
+        <div class='tag'>Related to: Aci Troubleshooting With Nexus Dashboard Insights <br><small>Path: Support > Application Centric Infrastructure (ACI) > Stage 3</small></div>
+      </details>
+      <details class='card card-mandatory card-related'>
+        <summary><h3>Optimize Your Apic User Experience Through Api Mastery <small>(Mandatory)</small></h3></summary>
+        <p>This PDF tells you about API mastery in your APIC strucuturing</p>
+        <div class='tag'>Related to: Part 1 Optimize Your Apic User Experience Through Api Mastery <br><small>Path: Support > Application Centric Infrastructure (ACI) > Stage 3</small></div>
+      </details>
+      <details class='card card-mandatory card-related'>
+        <summary><h3>Part 1 Optimize Your Apic User Experience Through Api Mastery <small>(Mandatory)</small></h3></summary>
+        <p>This video tells you about API mastery in your APIC strucuturing</p>
+        <div class='tag'>Related to: Optimize Your Apic User Experience Through Api Mastery <br><small>Path: Support > Application Centric Infrastructure (ACI) > Stage 3</small></div>
+      </details>
+      <details class='card card-mandatory card-related'>
+        <summary><h3>Part 2 Optimize Your Apic User Experience Through Api Mastery <small>(Mandatory)</small></h3></summary>
+        <p>This video tells you about API mastery in your APIC strucuturing</p>
+        <div class='tag'>Related to: Optimize Your Apic User Experience Through Api Mastery <br><small>Path: Support > Application Centric Infrastructure (ACI) > Stage 3</small></div>
+      </details>
+      <details class='card card-mandatory card-related'>
+        <summary><h3>Part 3 Optimize Your Apic User Experience Through Api Mastery <small>(Mandatory)</small></h3></summary>
+        <p>This video tells you about API mastery in your APIC strucuturing</p>
+        <div class='tag'>Related to: Optimize Your Apic User Experience Through Api Mastery <br><small>Path: Support > Application Centric Infrastructure (ACI) > Stage 3</small></div>
+      </details>
+      <details class='card card-mandatory card-related'>
+        <summary><h3>Part 4 Optimize Your Apic User Experience Through Api Mastery <small>(Mandatory)</small></h3></summary>
+        <p>This video tells you about API mastery in your APIC strucuturing</p>
+        <div class='tag'>Related to: Optimize Your Apic User Experience Through Api Mastery <br><small>Path: Support > Application Centric Infrastructure (ACI) > Stage 3</small></div>
+      </details>
+      <details class='card card-mandatory'>
+        <summary><h3>Black Belt ACI Support Stage 3 Quiz <small>(Mandatory)</small></h3></summary>
+        <p>This will assess your knowledge on ACI troubleshooting skills </p>
+        
+      </details>
+    </div>
+  </div>
+  <button class='lvl2' onclick='toggleVisibility("Support_VPN")'>VPN</button>
+  <div id='Support_VPN' class='container' style='display:none;'>
+    <button class='lvl3' onclick='toggleVisibility("Support_VPN_Stage_3")'>Stage 3</button>
+    <div id='Support_VPN_Stage_3' class='card-container' style='display:none;'>
+      <details class='card card-optional'>
+        <summary><h3>SSL AnyConnect With ISE Authentication <small>(Optional)</small></h3></summary>
+        <p>This session covers ISE authentication and group policy making.</p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>Configure AnyConnect VPN on FTD using Cisco ISE as a RADIUS Server with Windows Server 2012 Root CA <small>(Optional)</small></h3></summary>
+        <p>This doc explains how to connect anyconnect vpn with FTD using Radius server(Windows server 2012).</p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>Configure ASA: SSL Digital Certificate Installation and Renewal <small>(Optional)</small></h3></summary>
+        <p>This doc shares how to configure ASA.</p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>ASA Version 9.2.1 VPN Posture with ISE Configuration Example <small>(Optional)</small></h3></summary>
+        <p>This doc provides insights to ASA Version 9.2.1 VPN Posture with ISE Configuration Example.</p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>Configure SSL Anyconnect With ISE Authentication <small>(Optional)</small></h3></summary>
+        <p>This doc provides insights to configure SSL authentication with ISE.</p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>Configure ISE Posture over AnyConnect Remote Access VPN on FTD <small>(Optional)</small></h3></summary>
+        <p>This doc tells how to configure ISE posture over AnyConnect.</p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>VPN Troubleshooting for Firepower Threat Defense <small>(Optional)</small></h3></summary>
+        <p>This is a guide for Firepower management</p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>VPN Monitoring for Firepower Threat Defense <small>(Optional)</small></h3></summary>
+        <p>This is a guide for monitoring Firepower.</p>
+        
+      </details>
+      <details class='card card-optional card-related'>
+        <summary><h3>Cisco Zero Trust Lab v3.0 <small>(Optional)</small></h3></summary>
+        <p>This is a demo lab</p>
+        <div class='tag'>Related to: Duo with AnyConnect SAML and ISE TACACS+ v1.1 <br><small>Path: Support > VPN > Stage 3</small></div>
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>Generate FMC Reports for VPN Users <small>(Optional)</small></h3></summary>
+        <p>This doc provides you the insights on how to generate FMC reports for VPN.</p>
+        
+      </details>
+      <details class='card card-optional card-related'>
+        <summary><h3>Duo with AnyConnect SAML and ISE TACACS+ v1.1 <small>(Optional)</small></h3></summary>
+        <p>This is a demo lab</p>
+        <div class='tag'>Related to: Cisco Zero Trust Lab v3.0 <br><small>Path: Support > VPN > Stage 3</small></div>
+      </details>
+      <details class='card card-optional card-related'>
+        <summary><h3>Cisco Secure Connect v2 - Instant Demo <small>(Optional)</small></h3></summary>
+        <p>This is a demo lab</p>
+        <div class='tag'>Related to: Cisco Zero Trust Lab v3.0 <br><small>Path: Support > VPN > Stage 3</small></div>
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>Cisco Secure Connect Now for Simplified ZTNA and SASE <small>(Optional)</small></h3></summary>
+        <p>Cisco Secure Connect Now for Simplified ZTNA and SASE</p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>Cisco Secure Firewall 7.3 Release - Remote Access VPN Dashboard <small>(Optional)</small></h3></summary>
+        <p>This session covers Cisco Secure Firewall 7.3 Release - Remote Access VPN Dashboard</p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>How to Configure ASA AnyConnect <small>(Optional)</small></h3></summary>
+        <p>This session covers ASA Anyconnect configuration</p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>Cisco FTD GeoLocation Use Case <small>(Optional)</small></h3></summary>
+        <p>This session covers Cisco FTD Remote Access VPN (AnyConnect) Integration with Duo GeoLocation Use Case</p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>How to issue and install wild-card certificates for ASA Remote Access <small>(Optional)</small></h3></summary>
+        <p>This session covers How to issue and install wild-card certificates for ASA Remote Access.</p>
+        
+      </details>
+      <details class='card card-mandatory card-related'>
+        <summary><h3>Black Belt VPN Support Stage 3 Quiz <small>(Mandatory)</small></h3></summary>
+        <p>This assesment test the knowldege of the participants who have gone through this learning series</p>
+        <div class='tag'>Related to: Black Belt UCS Support Stage 3 Quiz <br><small>Path: Support > UCS > Stage 3</small></div>
+      </details>
+    </div>
+  </div>
+  <button class='lvl2' onclick='toggleVisibility("Support_Nutanix")'>Nutanix</button>
+  <div id='Support_Nutanix' class='container' style='display:none;'>
+    <button class='lvl3' onclick='toggleVisibility("Support_Nutanix_Stage_2")'>Stage 2</button>
+    <div id='Support_Nutanix_Stage_2' class='card-container' style='display:none;'>
+      <details class='card card-optional card-related'>
+        <summary><h3>Part 1 From Everything to Nothing to Everything the Tale of Intersight, UCS and Nutanix <small>(Optional)</small></h3></summary>
+        <p>Explore the journey of Intersight, UCS, and Nutanix — from everything to nothing to everything again.
+Estimated module completion time : 21 mins</p>
+        <div class='tag'>Related to: Part 2 From Everything to Nothing to Everything the Tale of Intersight, UCS and Nutanix <br><small>Path: Support > Nutanix > Stage 2</small></div>
+      </details>
+      <details class='card card-optional card-related'>
+        <summary><h3>Part 2 From Everything to Nothing to Everything the Tale of Intersight, UCS and Nutanix <small>(Optional)</small></h3></summary>
+        <p>Explore the journey of Intersight, UCS, and Nutanix — from everything to nothing to everything again.
+Estimated module completion time : 15 mins</p>
+        <div class='tag'>Related to: Part 1 From Everything to Nothing to Everything the Tale of Intersight, UCS and Nutanix <br><small>Path: Support > Nutanix > Stage 2</small></div>
+      </details>
+      <details class='card card-optional card-related'>
+        <summary><h3>Part 3 From Everything to Nothing to Everything the Tale of Intersight, UCS and Nutanix <small>(Optional)</small></h3></summary>
+        <p>Explore the journey of Intersight, UCS, and Nutanix — from everything to nothing to everything again.
+Estimated module completion time : 20 mins</p>
+        <div class='tag'>Related to: Part 1 From Everything to Nothing to Everything the Tale of Intersight, UCS and Nutanix <br><small>Path: Support > Nutanix > Stage 2</small></div>
+      </details>
+      <details class='card card-optional card-related'>
+        <summary><h3>Part 4 From Everything to Nothing to Everything the Tale of Intersight, UCS and Nutanix <small>(Optional)</small></h3></summary>
+        <p>Explore the journey of Intersight, UCS, and Nutanix — from everything to nothing to everything again.
+Estimated module completion time : 32 mins</p>
+        <div class='tag'>Related to: Part 1 From Everything to Nothing to Everything the Tale of Intersight, UCS and Nutanix <br><small>Path: Support > Nutanix > Stage 2</small></div>
+      </details>
+      <details class='card card-optional card-related'>
+        <summary><h3>Part 1 Integrate and Automate Cisco Compute Hyperconverged with Nutanix <small>(Optional)</small></h3></summary>
+        <p>Discover how to integrate and automate Cisco Compute and Hyperconverged solutions with Nutanix.
+Estimated module completion time : 14 mins</p>
+        <div class='tag'>Related to: Part 2 Integrate and Automate Cisco Compute Hyperconverged with Nutanix <br><small>Path: Support > Nutanix > Stage 2</small></div>
+      </details>
+      <details class='card card-optional card-related'>
+        <summary><h3>Part 2 Integrate and Automate Cisco Compute Hyperconverged with Nutanix <small>(Optional)</small></h3></summary>
+        <p>Discover how to integrate and automate Cisco Compute and Hyperconverged solutions with Nutanix.
+Estimated module completion time : 17 mins</p>
+        <div class='tag'>Related to: Part 1 Integrate and Automate Cisco Compute Hyperconverged with Nutanix <br><small>Path: Support > Nutanix > Stage 2</small></div>
+      </details>
+      <details class='card card-optional card-related'>
+        <summary><h3>Part 3 Integrate and Automate Cisco Compute Hyperconverged with Nutanix <small>(Optional)</small></h3></summary>
+        <p>Discover how to integrate and automate Cisco Compute and Hyperconverged solutions with Nutanix.
+Estimated module completion time : 13 mins</p>
+        <div class='tag'>Related to: Part 1 Integrate and Automate Cisco Compute Hyperconverged with Nutanix <br><small>Path: Support > Nutanix > Stage 2</small></div>
+      </details>
+      <details class='card card-optional card-related'>
+        <summary><h3>Part 1 Next-Gen Hyperconvergence Cisco Compute and Nutanix Innovations Unveiled <small>(Optional)</small></h3></summary>
+        <p>Unveiling the next generation of hyperconvergence with Cisco Compute and Nutanix innovations.
+Estimated module completion time : 14 mins</p>
+        <div class='tag'>Related to: Part 2 Next-Gen Hyperconvergence Cisco Compute and Nutanix Innovations Unveiled <br><small>Path: Support > Nutanix > Stage 2</small></div>
+      </details>
+      <details class='card card-optional card-related'>
+        <summary><h3>Part 2 Next-Gen Hyperconvergence Cisco Compute and Nutanix Innovations Unveiled <small>(Optional)</small></h3></summary>
+        <p>Unveiling the next generation of hyperconvergence with Cisco Compute and Nutanix innovations.
+Estimated module completion time : 15 mins</p>
+        <div class='tag'>Related to: Part 1 Next-Gen Hyperconvergence Cisco Compute and Nutanix Innovations Unveiled <br><small>Path: Support > Nutanix > Stage 2</small></div>
+      </details>
+      <details class='card card-mandatory'>
+        <summary><h3>Black Belt Nutanix Support Stage 2 Quiz <small>(Mandatory)</small></h3></summary>
+        <p>Test Your Knowledge</p>
+        
+      </details>
+    </div>
+  </div>
+  <button class='lvl2' onclick='toggleVisibility("Support_ISE")'>ISE</button>
+  <div id='Support_ISE' class='container' style='display:none;'>
+    <button class='lvl3' onclick='toggleVisibility("Support_ISE_Stage_2")'>Stage 2</button>
+    <div id='Support_ISE_Stage_2' class='card-container' style='display:none;'>
+      <details class='card card-optional'>
+        <summary><h3>What Is Cisco ISE <small>(Optional)</small></h3></summary>
+        <p>You are encouraged but not required to complete this pre-training survey, so your valuable feedback and comments can be utilized to improve the CX Cloud Demo Training for future phases.</p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>Device Admin and Troubleshooting <small>(Optional)</small></h3></summary>
+        <p>This video talks about troubleshooting techniques for TACACS.</p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>ISE Backup and Troubleshooting <small>(Optional)</small></h3></summary>
+        <p>This video talks about creating ISE backup and troubleshooting</p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>ISE Licensing and Troubleshooting <small>(Optional)</small></h3></summary>
+        <p>This video talks about ISE licenses and troubleshooting issues</p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>Certificate Management <small>(Optional)</small></h3></summary>
+        <p>This video talks about Certificate management in ISE</p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>DNAC and ISE Integration <small>(Optional)</small></h3></summary>
+        <p>This video talks about DNAC and ISE integration</p>
+        
+      </details>
+      <details class='card card-mandatory'>
+        <summary><h3>Black Belt Support ISE Stage 2 Quiz <small>(Mandatory)</small></h3></summary>
+        <p>This quiz will assess knowledge and skills for the Black Belt Support ISE troubleshooting.</p>
+        
+      </details>
+    </div>
+    <button class='lvl3' onclick='toggleVisibility("Support_ISE_Stage_3")'>Stage 3</button>
+    <div id='Support_ISE_Stage_3' class='card-container' style='display:none;'>
+      <details class='card card-optional'>
+        <summary><h3>Cisco ISE and Stealthwatch Integration using an external CA <small>(Optional)</small></h3></summary>
+        <p>This video, we'll walk through the process of integrating Cisco Identity Services Engine with Cisco Secure Network Analytics, also known as Stealthwatch using an external CA.</p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>ISE - WSA <small>(Optional)</small></h3></summary>
+        <p>This video will talk about on how to perform the integration of Cisco Identity Service Engine with Cisco Web Secure Appliance, also known as WSA using an external CA server.</p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>Arista TACACS <small>(Optional)</small></h3></summary>
+        <p>This video provides a step-by-step demonstration on how to configure TACACS+ on an Arista switch and integrate it with Cisco ISE.</p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>ISE - RADIUS Aritsa <small>(Optional)</small></h3></summary>
+        <p>This videos talks about configuring RADIUS device login for Arista Switches using Cisco ISE.</p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>Palo Alto TACACS <small>(Optional)</small></h3></summary>
+        <p>This video will demonstrate how to configure TACACS+ device administration and Palo Alto using Cisco ISE.</p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>ISE Patch Upgrade <small>(Optional)</small></h3></summary>
+        <p>This video talks about ISE Patching and Upgrade.</p>
+        
+      </details>
+      <details class='card card-optional'>
+        <summary><h3>ISE - AD Integration <small>(Optional)</small></h3></summary>
+        <p>This video explains about the integration of ISE with Active Directory.</p>
+        
+      </details>
+      <details class='card card-mandatory card-related'>
+        <summary><h3>Black Belt ISE Support Stage 3 Quiz <small>(Mandatory)</small></h3></summary>
+        <p>This assessment test the knowledge of the participants who have gone through this Black Belt ISE Support Stage 3 Learning Series.</p>
+        <div class='tag'>Related to: Black Belt UCS Support Stage 3 Quiz <br><small>Path: Support > UCS > Stage 3</small></div>
+      </details>
+    </div>
+  </div>
+  <button class='lvl2' onclick='toggleVisibility("Support_ASA_and_Firewall")'>ASA and Firewall</button>
+  <div id='Support_ASA_and_Firewall' class='container' style='display:none;'>
+    <button class='lvl3' onclick='toggleVisibility("Support_ASA_and_Firewall_Stage_3")'>Stage 3</button>
+    <div id='Support_ASA_and_Firewall_Stage_3' class='card-container' style='display:none;'>
+      <details class='card card-mandatory card-related'>
+        <summary><h3>Part 1 Endtoend Asa To Ngfw Migration <small>(Mandatory)</small></h3></summary>
+        <p>This video will provide you insights on ASA migration</p>
+        <div class='tag'>Related to: Part 2 Endtoend Asa To Ngfw Migration <br><small>Path: Support > ASA and Firewall > Stage 3</small></div>
+      </details>
+      <details class='card card-mandatory card-related'>
+        <summary><h3>Part 2 Endtoend Asa To Ngfw Migration <small>(Mandatory)</small></h3></summary>
+        <p>This video will provide you insights on ASA migration</p>
+        <div class='tag'>Related to: Part 1 Endtoend Asa To Ngfw Migration <br><small>Path: Support > ASA and Firewall > Stage 3</small></div>
+      </details>
+      <details class='card card-mandatory card-related'>
+        <summary><h3>Part 1 Keeping Up On Network Security With Cisco Secure Firewall <small>(Mandatory)</small></h3></summary>
+        <p>This video will provide you insights on Cisco Secure firewall </p>
+        <div class='tag'>Related to: Part 2 Keeping Up On Network Security With Cisco Secure Firewall <br><small>Path: Support > ASA and Firewall > Stage 3</small></div>
+      </details>
+      <details class='card card-mandatory card-related'>
+        <summary><h3>Part 2 Keeping Up On Network Security With Cisco Secure Firewall <small>(Mandatory)</small></h3></summary>
+        <p>This video will provide you insights on Cisco Secure firewall </p>
+        <div class='tag'>Related to: Part 1 Keeping Up On Network Security With Cisco Secure Firewall <br><small>Path: Support > ASA and Firewall > Stage 3</small></div>
+      </details>
+      <details class='card card-mandatory card-related'>
+        <summary><h3>Part 1 Enhanced Application Visibility Video <small>(Mandatory)</small></h3></summary>
+        <p>This video talks about Enhanced application visibility </p>
+        <div class='tag'>Related to: Part 2 Enhanced Application Visibility Video <br><small>Path: Support > ASA and Firewall > Stage 3</small></div>
+      </details>
+      <details class='card card-mandatory card-related'>
+        <summary><h3>Part 2 Enhanced Application Visibility Video <small>(Mandatory)</small></h3></summary>
+        <p>This video talks about Enhanced application visibility </p>
+        <div class='tag'>Related to: Part 1 Enhanced Application Visibility Video <br><small>Path: Support > ASA and Firewall > Stage 3</small></div>
+      </details>
+      <details class='card card-mandatory card-related'>
+        <summary><h3>Part 1 Firepower Threat Defense Automation Using Apis <small>(Mandatory)</small></h3></summary>
+        <p>This video talks about FTD automation using APIs</p>
+        <div class='tag'>Related to: Part 2 Firepower Threat Defense Automation Using Apis <br><small>Path: Support > ASA and Firewall > Stage 3</small></div>
+      </details>
+      <details class='card card-mandatory card-related'>
+        <summary><h3>Part 2 Firepower Threat Defense Automation Using Apis <small>(Mandatory)</small></h3></summary>
+        <p>This video talks about FTD automation using APIs</p>
+        <div class='tag'>Related to: Part 1 Firepower Threat Defense Automation Using Apis <br><small>Path: Support > ASA and Firewall > Stage 3</small></div>
+      </details>
+      <details class='card card-mandatory card-related'>
+        <summary><h3>Part 3 Firepower Threat Defense Automation Using Apis <small>(Mandatory)</small></h3></summary>
+        <p>This video talks about FTD automation using APIs</p>
+        <div class='tag'>Related to: Part 1 Firepower Threat Defense Automation Using Apis <br><small>Path: Support > ASA and Firewall > Stage 3</small></div>
+      </details>
+      <details class='card card-mandatory card-related'>
+        <summary><h3>Part 4 Firepower Threat Defense Automation Using Apis <small>(Mandatory)</small></h3></summary>
+        <p>This video talks about FTD automation using APIs</p>
+        <div class='tag'>Related to: Part 1 Firepower Threat Defense Automation Using Apis <br><small>Path: Support > ASA and Firewall > Stage 3</small></div>
+      </details>
+      <details class='card card-mandatory'>
+        <summary><h3>Black Belt Firewall Support Stage 3 Quiz <small>(Mandatory)</small></h3></summary>
+        <p>This will test your knowledge on the topics covered in the learning series</p>
+        
+      </details>
+    </div>
+  </div>
 </div>
 
-
-<div id="map">
-
-    <div id="world">
-
-        <svg id="line-layer">
-
-            <g id="lines"></g>
-
-        </svg>
-
-    </div>
-
-</div>
-
-
-<div id="tooltip"></div>
-
-
-<div id="legend">
-
-    <div class="legend-title">
-        Content Status
-    </div>
-
-    <div class="legend-row">
-
-        <span class="dot red"></span>
-        Mandatory
-
-    </div>
-
-    <div class="legend-row">
-
-        <span class="dot green"></span>
-        Optional
-
-    </div>
-
-    <div class="legend-row">
-
-        <span class="dot purple"></span>
-        Related
-
-    </div>
-
-</div>
-
-
-<div id="instructions">
-
-    Click nodes to expand/collapse
-    &nbsp; | &nbsp;
-    Drag background
-    &nbsp; | &nbsp;
-    Scroll to zoom
-
-</div>
-
-
-<script>
-
-
-// ============================================================
-// DATA
-// ============================================================
-
-const nodes =
-    [{"id": 0, "label": "Collaboration Map", "level": 0, "parent": null, "description": "", "status": "", "related_to": "", "related_path": ""}, {"id": 1, "label": "Support", "level": 1, "parent": 0, "description": "", "status": "", "related_to": "", "related_path": ""}, {"id": 2, "label": "UCS", "level": 2, "parent": 1, "description": "", "status": "", "related_to": "", "related_path": ""}, {"id": 3, "label": "Stage 3", "level": 3, "parent": 2, "description": "", "status": "", "related_to": "", "related_path": ""}, {"id": 4, "label": "X - Series Automation With Intersight And Ansible", "level": 4, "parent": 3, "description": "This pdf will talk about Multipod troubleshooting and insights", "status": "optional", "related_to": "ACI Troubleshooting Multipod", "related_path": "Support > Application Centric Infrastructure (ACI) > Stage 3"}, {"id": 5, "label": "Automation With Ucs X-Series Leveraging Cisco Intersight And Ansible", "level": 4, "parent": 3, "description": "In this blog, we will go through Automation with UCS X-Series leveraging Cisco Intersight and Ansible", "status": "optional", "related_to": "", "related_path": ""}, {"id": 6, "label": "Modernize Apps And Infrastructure Across The Hybrid Cloud With Cisco Ucs X - Series", "level": 4, "parent": 3, "description": "In this video, we will learn to modernize apps and infrastructure across the hybrid cloud with Cisco UCS X-Series", "status": "optional", "related_to": "", "related_path": ""}, {"id": 7, "label": "Modernize Workloads with Cisco UCS X-Series And Red Hat OpenShift", "level": 4, "parent": 3, "description": "In this blog, we will learn how to modernize workloads with Cisco UCS X-Series And Red Hat OpenShift", "status": "optional", "related_to": "", "related_path": ""}, {"id": 8, "label": "Deploy Red Hat Openshift OCP On Ucs-X Series", "level": 4, "parent": 3, "description": "In this video, we will go through how to deploy Red Hat OpenShift OCP on UCS-X Series", "status": "optional", "related_to": "", "related_path": ""}, {"id": 9, "label": "Unleash the Power of Converged Infrastructure Using Cisco Intersight and UCS X-Series", "level": 4, "parent": 3, "description": "In this video, we will go learn how to unleash the power of Converged Infrastructure using Cisco Intersight and UCS X-Series.", "status": "optional", "related_to": "", "related_path": ""}, {"id": 10, "label": "Cisco Converged Infrastructure Overview : FlexPod", "level": 4, "parent": 3, "description": "In this pdf, we will go through Cisco Converged Infrastructure Overview : FlexPod.", "status": "optional", "related_to": "", "related_path": ""}, {"id": 11, "label": "NetApp and Cisco Winning Together: FlexPod with X-Series", "level": 4, "parent": 3, "description": "Watch the recording of the March Winning Together to learn more about FlexPod on UCS X-Series.", "status": "optional", "related_to": "", "related_path": ""}, {"id": 12, "label": "Cisco Converged Infrastructure Overview : FlashStack", "level": 4, "parent": 3, "description": "In this PDF we will learn Cisco Converged Infrastructure Overview - FlashStack", "status": "optional", "related_to": "", "related_path": ""}, {"id": 13, "label": "What's New in FlashStack and a Look into the Future", "level": 4, "parent": 3, "description": "In this video, we can learn what's New in FlashStack and its look into the future", "status": "optional", "related_to": "", "related_path": ""}, {"id": 14, "label": "Pervasive Visibility across FlashStack Infrastructure with Cisco UCS & Intersight", "level": 4, "parent": 3, "description": "In this video, we will see pervasive visibility across FlashStack Infrastructure with Cisco UCS & Intersight.", "status": "optional", "related_to": "", "related_path": ""}, {"id": 15, "label": "FlashStack on UCS X-Series Demo", "level": 4, "parent": 3, "description": "In this video, we will go through FlashStack on UCS X-Series Demo.", "status": "optional", "related_to": "", "related_path": ""}, {"id": 16, "label": "Part 1 Mastering Cisco Ucs Innovations , Best Practices And Troubleshooting", "level": 4, "parent": 3, "description": "This section provides a comprehensive overview of the Cisco Unified Computing System (UCS) architecture and its integration with Cisco Intersight, Cisco’s cloud-based infrastructure management platform.", "status": "optional", "related_to": "", "related_path": ""}, {"id": 17, "label": "Part 2 Mastering Cisco Ucs Innovations , Best Practices And Troubleshooting", "level": 4, "parent": 3, "description": "This section focuses deeply on hardware-level troubleshooting, starting with the power and cooling subsystems within UCS infrastructure.", "status": "optional", "related_to": "", "related_path": ""}, {"id": 18, "label": "Part 3 Mastering Cisco Ucs Innovations , Best Practices And Troubleshooting", "level": 4, "parent": 3, "description": "The section explains about policy-level misconfigurations, firmware-related challenges, and advanced Intersight diagnostics.", "status": "optional", "related_to": "", "related_path": ""}, {"id": 19, "label": "FlexPod Datacenter with Cisco UCS X-Series White Paper", "level": 4, "parent": 3, "description": "This FlexPod Datacenter with Cisco X-series white paper provides design guidance around incorporating the Cisco Intersight—managed UCS X-Series platform within FlexPod Datacenter infrastructure. Powered by the Cisco Intersight cloud-operations platform.", "status": "optional", "related_to": "", "related_path": ""}, {"id": 20, "label": "FlashStack with Cisco UCS X-Series and Cisco Intersight", "level": 4, "parent": 3, "description": "This document provides design guidance around incorporating the Cisco Intersight software-managed Cisco UCS X-Series platform within the FlashStack solution.", "status": "optional", "related_to": "", "related_path": ""}, {"id": 21, "label": "FlashStack Virtual Server Infrastructure with Cisco UCS X-Series - CVD", "level": 4, "parent": 3, "description": "In this CVD we will go through FlashStack Virtual server infrastructure with Cisco UCS X-Series and VMware 7.0 U2 design guide.", "status": "optional", "related_to": "", "related_path": ""}, {"id": 22, "label": "FlexPod Datacenter with Cisco UCS X-Series - CVD", "level": 4, "parent": 3, "description": "In this CVD we will go through FlexPod Datacenter with Cisco UCS X-Series - CVD.", "status": "optional", "related_to": "", "related_path": ""}, {"id": 23, "label": "Black Belt UCS Support Stage 3 Quiz", "level": 4, "parent": 3, "description": "This assesment test the knowldege of the participants who have gone through this learning series", "status": "mandatory", "related_to": "Black Belt VPN Support Stage 3 Quiz", "related_path": "Support > VPN > Stage 3"}, {"id": 24, "label": "Application Centric Infrastructure (ACI)", "level": 2, "parent": 1, "description": "", "status": "", "related_to": "", "related_path": ""}, {"id": 25, "label": "Stage 3", "level": 3, "parent": 24, "description": "", "status": "", "related_to": "", "related_path": ""}, {"id": 26, "label": "ACI Troubleshooting Multipod", "level": 4, "parent": 25, "description": "This pdf will talk about Multipod troubleshooting and insights", "status": "mandatory", "related_to": "X - Series Automation With Intersight And Ansible", "related_path": "Support > UCS > Stage 3"}, {"id": 27, "label": "Multipod Overview", "level": 4, "parent": 25, "description": "This video will talk about Multipod troubleshooting and insights", "status": "mandatory", "related_to": "X - Series Automation With Intersight And Ansible", "related_path": "Support > UCS > Stage 3"}, {"id": 28, "label": "Troubleshooting Unicast Flows", "level": 4, "parent": 25, "description": "This video provide insights on troubleshooting unicast flows", "status": "mandatory", "related_to": "Troubleshooting Multidestination Flows", "related_path": "Support > Application Centric Infrastructure (ACI) > Stage 3"}, {"id": 29, "label": "Troubleshooting Multidestination Flows", "level": 4, "parent": 25, "description": "This video provide insights on troubleshooting multidestination flows", "status": "mandatory", "related_to": "Troubleshooting Unicast Flows", "related_path": "Support > Application Centric Infrastructure (ACI) > Stage 3"}, {"id": 30, "label": "Quality of Service", "level": 4, "parent": 25, "description": "This video provide insights on QOS troubleshooting", "status": "mandatory", "related_to": "Troubleshooting Unicast Flows", "related_path": "Support > Application Centric Infrastructure (ACI) > Stage 3"}, {"id": 31, "label": "Troubleshooting the Multipod Setup", "level": 4, "parent": 25, "description": "This video will provide you insights on troubleshooting the multipod setup", "status": "mandatory", "related_to": "", "related_path": ""}, {"id": 32, "label": "ACI Troubleshooting A deep dive into PBR", "level": 4, "parent": 25, "description": "This pdf talks about troubleshooting PBR", "status": "mandatory", "related_to": "Part 1 - ACI Troubleshooting A deep dive into PBR", "related_path": "Support > Application Centric Infrastructure (ACI) > Stage 3"}, {"id": 33, "label": "Part 1 - ACI Troubleshooting A deep dive into PBR", "level": 4, "parent": 25, "description": "This video talks about troubleshooting PBR", "status": "mandatory", "related_to": "ACI Troubleshooting A deep dive into PBR", "related_path": "Support > Application Centric Infrastructure (ACI) > Stage 3"}, {"id": 34, "label": "Part 2 - ACI Troubleshooting A deep dive into PBR", "level": 4, "parent": 25, "description": "This video talks about troubleshooting PBR", "status": "mandatory", "related_to": "ACI Troubleshooting A deep dive into PBR", "related_path": "Support > Application Centric Infrastructure (ACI) > Stage 3"}, {"id": 35, "label": "Part 3 - ACI Troubleshooting A deep dive into PBR", "level": 4, "parent": 25, "description": "This video talks about troubleshooting PBR", "status": "mandatory", "related_to": "ACI Troubleshooting A deep dive into PBR", "related_path": "Support > Application Centric Infrastructure (ACI) > Stage 3"}, {"id": 36, "label": "Part 4 - ACI Troubleshooting A deep dive into PBR", "level": 4, "parent": 25, "description": "This video talks about troubleshooting PBR", "status": "mandatory", "related_to": "ACI Troubleshooting A deep dive into PBR", "related_path": "Support > Application Centric Infrastructure (ACI) > Stage 3"}, {"id": 37, "label": "Part 1 - Aci Troubleshooting Advanced L3Out Features", "level": 4, "parent": 25, "description": "This video talks about advanced L3 out features", "status": "mandatory", "related_to": "Part 2 - Aci Troubleshooting Advanced L3Out Features", "related_path": "Support > Application Centric Infrastructure (ACI) > Stage 3"}, {"id": 38, "label": "Part 2 - Aci Troubleshooting Advanced L3Out Features", "level": 4, "parent": 25, "description": "This video talks about advanced L3 out features", "status": "mandatory", "related_to": "Part 1 - Aci Troubleshooting Advanced L3Out Features", "related_path": "Support > Application Centric Infrastructure (ACI) > Stage 3"}, {"id": 39, "label": "Part 3 - Aci Troubleshooting Advanced L3Out Features", "level": 4, "parent": 25, "description": "This video talks about advanced L3 out features", "status": "mandatory", "related_to": "Part 1 - Aci Troubleshooting Advanced L3Out Features", "related_path": "Support > Application Centric Infrastructure (ACI) > Stage 3"}, {"id": 40, "label": "Aci Advanced L3Out Features", "level": 4, "parent": 25, "description": "This PDF talks about advanced L3 out features", "status": "mandatory", "related_to": "Part 1 - Aci Troubleshooting Advanced L3Out Features", "related_path": "Support > Application Centric Infrastructure (ACI) > Stage 3"}, {"id": 41, "label": "Aci Troubleshooting With Nexus Dashboard Insights", "level": 4, "parent": 25, "description": "This PDF gives us insights on NDI capabilities while troubleshooting ACI", "status": "mandatory", "related_to": "Part 1 Aci Troubleshooting With Nexus Dashboard Insights", "related_path": "Support > Application Centric Infrastructure (ACI) > Stage 3"}, {"id": 42, "label": "Part 1 Aci Troubleshooting With Nexus Dashboard Insights", "level": 4, "parent": 25, "description": "This video gives us insights on NDI capabilities while troubleshooting ACI", "status": "mandatory", "related_to": "Aci Troubleshooting With Nexus Dashboard Insights", "related_path": "Support > Application Centric Infrastructure (ACI) > Stage 3"}, {"id": 43, "label": "Part 2 Aci Troubleshooting With Nexus Dashboard Insights", "level": 4, "parent": 25, "description": "This video gives us insights on NDI capabilities while troubleshooting ACI", "status": "mandatory", "related_to": "Aci Troubleshooting With Nexus Dashboard Insights", "related_path": "Support > Application Centric Infrastructure (ACI) > Stage 3"}, {"id": 44, "label": "Part 3 Aci Troubleshooting With Nexus Dashboard Insights", "level": 4, "parent": 25, "description": "This video gives us insights on NDI capabilities while troubleshooting ACI", "status": "mandatory", "related_to": "Aci Troubleshooting With Nexus Dashboard Insights", "related_path": "Support > Application Centric Infrastructure (ACI) > Stage 3"}, {"id": 45, "label": "Part 4 Aci Troubleshooting With Nexus Dashboard Insights", "level": 4, "parent": 25, "description": "This video gives us insights on NDI capabilities while troubleshooting ACI", "status": "mandatory", "related_to": "Aci Troubleshooting With Nexus Dashboard Insights", "related_path": "Support > Application Centric Infrastructure (ACI) > Stage 3"}, {"id": 46, "label": "Part 5 Aci Troubleshooting With Nexus Dashboard Insights", "level": 4, "parent": 25, "description": "This video gives us insights on NDI capabilities while troubleshooting ACI", "status": "mandatory", "related_to": "Aci Troubleshooting With Nexus Dashboard Insights", "related_path": "Support > Application Centric Infrastructure (ACI) > Stage 3"}, {"id": 47, "label": "Optimize Your Apic User Experience Through Api Mastery", "level": 4, "parent": 25, "description": "This PDF tells you about API mastery in your APIC strucuturing", "status": "mandatory", "related_to": "Part 1 Optimize Your Apic User Experience Through Api Mastery", "related_path": "Support > Application Centric Infrastructure (ACI) > Stage 3"}, {"id": 48, "label": "Part 1 Optimize Your Apic User Experience Through Api Mastery", "level": 4, "parent": 25, "description": "This video tells you about API mastery in your APIC strucuturing", "status": "mandatory", "related_to": "Optimize Your Apic User Experience Through Api Mastery", "related_path": "Support > Application Centric Infrastructure (ACI) > Stage 3"}, {"id": 49, "label": "Part 2 Optimize Your Apic User Experience Through Api Mastery", "level": 4, "parent": 25, "description": "This video tells you about API mastery in your APIC strucuturing", "status": "mandatory", "related_to": "Optimize Your Apic User Experience Through Api Mastery", "related_path": "Support > Application Centric Infrastructure (ACI) > Stage 3"}, {"id": 50, "label": "Part 3 Optimize Your Apic User Experience Through Api Mastery", "level": 4, "parent": 25, "description": "This video tells you about API mastery in your APIC strucuturing", "status": "mandatory", "related_to": "Optimize Your Apic User Experience Through Api Mastery", "related_path": "Support > Application Centric Infrastructure (ACI) > Stage 3"}, {"id": 51, "label": "Part 4 Optimize Your Apic User Experience Through Api Mastery", "level": 4, "parent": 25, "description": "This video tells you about API mastery in your APIC strucuturing", "status": "mandatory", "related_to": "Optimize Your Apic User Experience Through Api Mastery", "related_path": "Support > Application Centric Infrastructure (ACI) > Stage 3"}, {"id": 52, "label": "Black Belt ACI Support Stage 3 Quiz", "level": 4, "parent": 25, "description": "This will assess your knowledge on ACI troubleshooting skills", "status": "mandatory", "related_to": "", "related_path": ""}, {"id": 53, "label": "VPN", "level": 2, "parent": 1, "description": "", "status": "", "related_to": "", "related_path": ""}, {"id": 54, "label": "Stage 3", "level": 3, "parent": 53, "description": "", "status": "", "related_to": "", "related_path": ""}, {"id": 55, "label": "SSL AnyConnect With ISE Authentication", "level": 4, "parent": 54, "description": "This session covers ISE authentication and group policy making.", "status": "optional", "related_to": "", "related_path": ""}, {"id": 56, "label": "Configure AnyConnect VPN on FTD using Cisco ISE as a RADIUS Server with Windows Server 2012 Root CA", "level": 4, "parent": 54, "description": "This doc explains how to connect anyconnect vpn with FTD using Radius server(Windows server 2012).", "status": "optional", "related_to": "", "related_path": ""}, {"id": 57, "label": "Configure ASA: SSL Digital Certificate Installation and Renewal", "level": 4, "parent": 54, "description": "This doc shares how to configure ASA.", "status": "optional", "related_to": "", "related_path": ""}, {"id": 58, "label": "ASA Version 9.2.1 VPN Posture with ISE Configuration Example", "level": 4, "parent": 54, "description": "This doc provides insights to ASA Version 9.2.1 VPN Posture with ISE Configuration Example.", "status": "optional", "related_to": "", "related_path": ""}, {"id": 59, "label": "Configure SSL Anyconnect With ISE Authentication", "level": 4, "parent": 54, "description": "This doc provides insights to configure SSL authentication with ISE.", "status": "optional", "related_to": "", "related_path": ""}, {"id": 60, "label": "Configure ISE Posture over AnyConnect Remote Access VPN on FTD", "level": 4, "parent": 54, "description": "This doc tells how to configure ISE posture over AnyConnect.", "status": "optional", "related_to": "", "related_path": ""}, {"id": 61, "label": "VPN Troubleshooting for Firepower Threat Defense", "level": 4, "parent": 54, "description": "This is a guide for Firepower management", "status": "optional", "related_to": "", "related_path": ""}, {"id": 62, "label": "VPN Monitoring for Firepower Threat Defense", "level": 4, "parent": 54, "description": "This is a guide for monitoring Firepower.", "status": "optional", "related_to": "", "related_path": ""}, {"id": 63, "label": "Cisco Zero Trust Lab v3.0", "level": 4, "parent": 54, "description": "This is a demo lab", "status": "optional", "related_to": "Duo with AnyConnect SAML and ISE TACACS+ v1.1", "related_path": "Support > VPN > Stage 3"}, {"id": 64, "label": "Generate FMC Reports for VPN Users", "level": 4, "parent": 54, "description": "This doc provides you the insights on how to generate FMC reports for VPN.", "status": "optional", "related_to": "", "related_path": ""}, {"id": 65, "label": "Duo with AnyConnect SAML and ISE TACACS+ v1.1", "level": 4, "parent": 54, "description": "This is a demo lab", "status": "optional", "related_to": "Cisco Zero Trust Lab v3.0", "related_path": "Support > VPN > Stage 3"}, {"id": 66, "label": "Cisco Secure Connect v2 - Instant Demo", "level": 4, "parent": 54, "description": "This is a demo lab", "status": "optional", "related_to": "Cisco Zero Trust Lab v3.0", "related_path": "Support > VPN > Stage 3"}, {"id": 67, "label": "Cisco Secure Connect Now for Simplified ZTNA and SASE", "level": 4, "parent": 54, "description": "Cisco Secure Connect Now for Simplified ZTNA and SASE", "status": "optional", "related_to": "", "related_path": ""}, {"id": 68, "label": "Cisco Secure Firewall 7.3 Release - Remote Access VPN Dashboard", "level": 4, "parent": 54, "description": "This session covers Cisco Secure Firewall 7.3 Release - Remote Access VPN Dashboard", "status": "optional", "related_to": "", "related_path": ""}, {"id": 69, "label": "How to Configure ASA AnyConnect", "level": 4, "parent": 54, "description": "This session covers ASA Anyconnect configuration", "status": "optional", "related_to": "", "related_path": ""}, {"id": 70, "label": "Cisco FTD GeoLocation Use Case", "level": 4, "parent": 54, "description": "This session covers Cisco FTD Remote Access VPN (AnyConnect) Integration with Duo GeoLocation Use Case", "status": "optional", "related_to": "", "related_path": ""}, {"id": 71, "label": "How to issue and install wild-card certificates for ASA Remote Access", "level": 4, "parent": 54, "description": "This session covers How to issue and install wild-card certificates for ASA Remote Access.", "status": "optional", "related_to": "", "related_path": ""}, {"id": 72, "label": "Black Belt VPN Support Stage 3 Quiz", "level": 4, "parent": 54, "description": "This assesment test the knowldege of the participants who have gone through this learning series", "status": "mandatory", "related_to": "Black Belt UCS Support Stage 3 Quiz", "related_path": "Support > UCS > Stage 3"}, {"id": 73, "label": "Nutanix", "level": 2, "parent": 1, "description": "", "status": "", "related_to": "", "related_path": ""}, {"id": 74, "label": "Stage 2", "level": 3, "parent": 73, "description": "", "status": "", "related_to": "", "related_path": ""}, {"id": 75, "label": "Part 1 From Everything to Nothing to Everything the Tale of Intersight, UCS and Nutanix", "level": 4, "parent": 74, "description": "Explore the journey of Intersight, UCS, and Nutanix — from everything to nothing to everything again.\nEstimated module completion time : 21 mins", "status": "optional", "related_to": "Part 2 From Everything to Nothing to Everything the Tale of Intersight, UCS and Nutanix", "related_path": "Support > Nutanix > Stage 2"}, {"id": 76, "label": "Part 2 From Everything to Nothing to Everything the Tale of Intersight, UCS and Nutanix", "level": 4, "parent": 74, "description": "Explore the journey of Intersight, UCS, and Nutanix — from everything to nothing to everything again.\nEstimated module completion time : 15 mins", "status": "optional", "related_to": "Part 1 From Everything to Nothing to Everything the Tale of Intersight, UCS and Nutanix", "related_path": "Support > Nutanix > Stage 2"}, {"id": 77, "label": "Part 3 From Everything to Nothing to Everything the Tale of Intersight, UCS and Nutanix", "level": 4, "parent": 74, "description": "Explore the journey of Intersight, UCS, and Nutanix — from everything to nothing to everything again.\nEstimated module completion time : 20 mins", "status": "optional", "related_to": "Part 1 From Everything to Nothing to Everything the Tale of Intersight, UCS and Nutanix", "related_path": "Support > Nutanix > Stage 2"}, {"id": 78, "label": "Part 4 From Everything to Nothing to Everything the Tale of Intersight, UCS and Nutanix", "level": 4, "parent": 74, "description": "Explore the journey of Intersight, UCS, and Nutanix — from everything to nothing to everything again.\nEstimated module completion time : 32 mins", "status": "optional", "related_to": "Part 1 From Everything to Nothing to Everything the Tale of Intersight, UCS and Nutanix", "related_path": "Support > Nutanix > Stage 2"}, {"id": 79, "label": "Part 1 Integrate and Automate Cisco Compute Hyperconverged with Nutanix", "level": 4, "parent": 74, "description": "Discover how to integrate and automate Cisco Compute and Hyperconverged solutions with Nutanix.\nEstimated module completion time : 14 mins", "status": "optional", "related_to": "Part 2 Integrate and Automate Cisco Compute Hyperconverged with Nutanix", "related_path": "Support > Nutanix > Stage 2"}, {"id": 80, "label": "Part 2 Integrate and Automate Cisco Compute Hyperconverged with Nutanix", "level": 4, "parent": 74, "description": "Discover how to integrate and automate Cisco Compute and Hyperconverged solutions with Nutanix.\nEstimated module completion time : 17 mins", "status": "optional", "related_to": "Part 1 Integrate and Automate Cisco Compute Hyperconverged with Nutanix", "related_path": "Support > Nutanix > Stage 2"}, {"id": 81, "label": "Part 3 Integrate and Automate Cisco Compute Hyperconverged with Nutanix", "level": 4, "parent": 74, "description": "Discover how to integrate and automate Cisco Compute and Hyperconverged solutions with Nutanix.\nEstimated module completion time : 13 mins", "status": "optional", "related_to": "Part 1 Integrate and Automate Cisco Compute Hyperconverged with Nutanix", "related_path": "Support > Nutanix > Stage 2"}, {"id": 82, "label": "Part 1 Next-Gen Hyperconvergence Cisco Compute and Nutanix Innovations Unveiled", "level": 4, "parent": 74, "description": "Unveiling the next generation of hyperconvergence with Cisco Compute and Nutanix innovations.\nEstimated module completion time : 14 mins", "status": "optional", "related_to": "Part 2 Next-Gen Hyperconvergence Cisco Compute and Nutanix Innovations Unveiled", "related_path": "Support > Nutanix > Stage 2"}, {"id": 83, "label": "Part 2 Next-Gen Hyperconvergence Cisco Compute and Nutanix Innovations Unveiled", "level": 4, "parent": 74, "description": "Unveiling the next generation of hyperconvergence with Cisco Compute and Nutanix innovations.\nEstimated module completion time : 15 mins", "status": "optional", "related_to": "Part 1 Next-Gen Hyperconvergence Cisco Compute and Nutanix Innovations Unveiled", "related_path": "Support > Nutanix > Stage 2"}, {"id": 84, "label": "Black Belt Nutanix Support Stage 2 Quiz", "level": 4, "parent": 74, "description": "Test Your Knowledge", "status": "mandatory", "related_to": "", "related_path": ""}, {"id": 85, "label": "ISE", "level": 2, "parent": 1, "description": "", "status": "", "related_to": "", "related_path": ""}, {"id": 86, "label": "Stage 2", "level": 3, "parent": 85, "description": "", "status": "", "related_to": "", "related_path": ""}, {"id": 87, "label": "What Is Cisco ISE", "level": 4, "parent": 86, "description": "You are encouraged but not required to complete this pre-training survey, so your valuable feedback and comments can be utilized to improve the CX Cloud Demo Training for future phases.", "status": "optional", "related_to": "", "related_path": ""}, {"id": 88, "label": "Device Admin and Troubleshooting", "level": 4, "parent": 86, "description": "This video talks about troubleshooting techniques for TACACS.", "status": "optional", "related_to": "", "related_path": ""}, {"id": 89, "label": "ISE Backup and Troubleshooting", "level": 4, "parent": 86, "description": "This video talks about creating ISE backup and troubleshooting", "status": "optional", "related_to": "", "related_path": ""}, {"id": 90, "label": "ISE Licensing and Troubleshooting", "level": 4, "parent": 86, "description": "This video talks about ISE licenses and troubleshooting issues", "status": "optional", "related_to": "", "related_path": ""}, {"id": 91, "label": "Certificate Management", "level": 4, "parent": 86, "description": "This video talks about Certificate management in ISE", "status": "optional", "related_to": "", "related_path": ""}, {"id": 92, "label": "DNAC and ISE Integration", "level": 4, "parent": 86, "description": "This video talks about DNAC and ISE integration", "status": "optional", "related_to": "", "related_path": ""}, {"id": 93, "label": "Black Belt Support ISE Stage 2 Quiz", "level": 4, "parent": 86, "description": "This quiz will assess knowledge and skills for the Black Belt Support ISE troubleshooting.", "status": "mandatory", "related_to": "", "related_path": ""}, {"id": 94, "label": "Stage 3", "level": 3, "parent": 85, "description": "", "status": "", "related_to": "", "related_path": ""}, {"id": 95, "label": "Cisco ISE and Stealthwatch Integration using an external CA", "level": 4, "parent": 94, "description": "This video, we'll walk through the process of integrating Cisco Identity Services Engine with Cisco Secure Network Analytics, also known as Stealthwatch using an external CA.", "status": "optional", "related_to": "", "related_path": ""}, {"id": 96, "label": "ISE - WSA", "level": 4, "parent": 94, "description": "This video will talk about on how to perform the integration of Cisco Identity Service Engine with Cisco Web Secure Appliance, also known as WSA using an external CA server.", "status": "optional", "related_to": "", "related_path": ""}, {"id": 97, "label": "Arista TACACS", "level": 4, "parent": 94, "description": "This video provides a step-by-step demonstration on how to configure TACACS+ on an Arista switch and integrate it with Cisco ISE.", "status": "optional", "related_to": "", "related_path": ""}, {"id": 98, "label": "ISE - RADIUS Aritsa", "level": 4, "parent": 94, "description": "This videos talks about configuring RADIUS device login for Arista Switches using Cisco ISE.", "status": "optional", "related_to": "", "related_path": ""}, {"id": 99, "label": "Palo Alto TACACS", "level": 4, "parent": 94, "description": "This video will demonstrate how to configure TACACS+ device administration and Palo Alto using Cisco ISE.", "status": "optional", "related_to": "", "related_path": ""}, {"id": 100, "label": "ISE Patch Upgrade", "level": 4, "parent": 94, "description": "This video talks about ISE Patching and Upgrade.", "status": "optional", "related_to": "", "related_path": ""}, {"id": 101, "label": "ISE - AD Integration", "level": 4, "parent": 94, "description": "This video explains about the integration of ISE with Active Directory.", "status": "optional", "related_to": "", "related_path": ""}, {"id": 102, "label": "Black Belt ISE Support Stage 3 Quiz", "level": 4, "parent": 94, "description": "This assessment test the knowledge of the participants who have gone through this Black Belt ISE Support Stage 3 Learning Series.", "status": "mandatory", "related_to": "Black Belt UCS Support Stage 3 Quiz", "related_path": "Support > UCS > Stage 3"}, {"id": 103, "label": "ASA and Firewall", "level": 2, "parent": 1, "description": "", "status": "", "related_to": "", "related_path": ""}, {"id": 104, "label": "Stage 3", "level": 3, "parent": 103, "description": "", "status": "", "related_to": "", "related_path": ""}, {"id": 105, "label": "Part 1 Endtoend Asa To Ngfw Migration", "level": 4, "parent": 104, "description": "This video will provide you insights on ASA migration", "status": "mandatory", "related_to": "Part 2 Endtoend Asa To Ngfw Migration", "related_path": "Support > ASA and Firewall > Stage 3"}, {"id": 106, "label": "Part 2 Endtoend Asa To Ngfw Migration", "level": 4, "parent": 104, "description": "This video will provide you insights on ASA migration", "status": "mandatory", "related_to": "Part 1 Endtoend Asa To Ngfw Migration", "related_path": "Support > ASA and Firewall > Stage 3"}, {"id": 107, "label": "Part 1 Keeping Up On Network Security With Cisco Secure Firewall", "level": 4, "parent": 104, "description": "This video will provide you insights on Cisco Secure firewall", "status": "mandatory", "related_to": "Part 2 Keeping Up On Network Security With Cisco Secure Firewall", "related_path": "Support > ASA and Firewall > Stage 3"}, {"id": 108, "label": "Part 2 Keeping Up On Network Security With Cisco Secure Firewall", "level": 4, "parent": 104, "description": "This video will provide you insights on Cisco Secure firewall", "status": "mandatory", "related_to": "Part 1 Keeping Up On Network Security With Cisco Secure Firewall", "related_path": "Support > ASA and Firewall > Stage 3"}, {"id": 109, "label": "Part 1 Enhanced Application Visibility Video", "level": 4, "parent": 104, "description": "This video talks about Enhanced application visibility", "status": "mandatory", "related_to": "Part 2 Enhanced Application Visibility Video", "related_path": "Support > ASA and Firewall > Stage 3"}, {"id": 110, "label": "Part 2 Enhanced Application Visibility Video", "level": 4, "parent": 104, "description": "This video talks about Enhanced application visibility", "status": "mandatory", "related_to": "Part 1 Enhanced Application Visibility Video", "related_path": "Support > ASA and Firewall > Stage 3"}, {"id": 111, "label": "Part 1 Firepower Threat Defense Automation Using Apis", "level": 4, "parent": 104, "description": "This video talks about FTD automation using APIs", "status": "mandatory", "related_to": "Part 2 Firepower Threat Defense Automation Using Apis", "related_path": "Support > ASA and Firewall > Stage 3"}, {"id": 112, "label": "Part 2 Firepower Threat Defense Automation Using Apis", "level": 4, "parent": 104, "description": "This video talks about FTD automation using APIs", "status": "mandatory", "related_to": "Part 1 Firepower Threat Defense Automation Using Apis", "related_path": "Support > ASA and Firewall > Stage 3"}, {"id": 113, "label": "Part 3 Firepower Threat Defense Automation Using Apis", "level": 4, "parent": 104, "description": "This video talks about FTD automation using APIs", "status": "mandatory", "related_to": "Part 1 Firepower Threat Defense Automation Using Apis", "related_path": "Support > ASA and Firewall > Stage 3"}, {"id": 114, "label": "Part 4 Firepower Threat Defense Automation Using Apis", "level": 4, "parent": 104, "description": "This video talks about FTD automation using APIs", "status": "mandatory", "related_to": "Part 1 Firepower Threat Defense Automation Using Apis", "related_path": "Support > ASA and Firewall > Stage 3"}, {"id": 115, "label": "Black Belt Firewall Support Stage 3 Quiz", "level": 4, "parent": 104, "description": "This will test your knowledge on the topics covered in the learning series", "status": "mandatory", "related_to": "", "related_path": ""}];
-
-
-const links =
-    [{"source": 0, "target": 1}, {"source": 1, "target": 2}, {"source": 2, "target": 3}, {"source": 3, "target": 4}, {"source": 3, "target": 5}, {"source": 3, "target": 6}, {"source": 3, "target": 7}, {"source": 3, "target": 8}, {"source": 3, "target": 9}, {"source": 3, "target": 10}, {"source": 3, "target": 11}, {"source": 3, "target": 12}, {"source": 3, "target": 13}, {"source": 3, "target": 14}, {"source": 3, "target": 15}, {"source": 3, "target": 16}, {"source": 3, "target": 17}, {"source": 3, "target": 18}, {"source": 3, "target": 19}, {"source": 3, "target": 20}, {"source": 3, "target": 21}, {"source": 3, "target": 22}, {"source": 3, "target": 23}, {"source": 1, "target": 24}, {"source": 24, "target": 25}, {"source": 25, "target": 26}, {"source": 25, "target": 27}, {"source": 25, "target": 28}, {"source": 25, "target": 29}, {"source": 25, "target": 30}, {"source": 25, "target": 31}, {"source": 25, "target": 32}, {"source": 25, "target": 33}, {"source": 25, "target": 34}, {"source": 25, "target": 35}, {"source": 25, "target": 36}, {"source": 25, "target": 37}, {"source": 25, "target": 38}, {"source": 25, "target": 39}, {"source": 25, "target": 40}, {"source": 25, "target": 41}, {"source": 25, "target": 42}, {"source": 25, "target": 43}, {"source": 25, "target": 44}, {"source": 25, "target": 45}, {"source": 25, "target": 46}, {"source": 25, "target": 47}, {"source": 25, "target": 48}, {"source": 25, "target": 49}, {"source": 25, "target": 50}, {"source": 25, "target": 51}, {"source": 25, "target": 52}, {"source": 1, "target": 53}, {"source": 53, "target": 54}, {"source": 54, "target": 55}, {"source": 54, "target": 56}, {"source": 54, "target": 57}, {"source": 54, "target": 58}, {"source": 54, "target": 59}, {"source": 54, "target": 60}, {"source": 54, "target": 61}, {"source": 54, "target": 62}, {"source": 54, "target": 63}, {"source": 54, "target": 64}, {"source": 54, "target": 65}, {"source": 54, "target": 66}, {"source": 54, "target": 67}, {"source": 54, "target": 68}, {"source": 54, "target": 69}, {"source": 54, "target": 70}, {"source": 54, "target": 71}, {"source": 54, "target": 72}, {"source": 1, "target": 73}, {"source": 73, "target": 74}, {"source": 74, "target": 75}, {"source": 74, "target": 76}, {"source": 74, "target": 77}, {"source": 74, "target": 78}, {"source": 74, "target": 79}, {"source": 74, "target": 80}, {"source": 74, "target": 81}, {"source": 74, "target": 82}, {"source": 74, "target": 83}, {"source": 74, "target": 84}, {"source": 1, "target": 85}, {"source": 85, "target": 86}, {"source": 86, "target": 87}, {"source": 86, "target": 88}, {"source": 86, "target": 89}, {"source": 86, "target": 90}, {"source": 86, "target": 91}, {"source": 86, "target": 92}, {"source": 86, "target": 93}, {"source": 85, "target": 94}, {"source": 94, "target": 95}, {"source": 94, "target": 96}, {"source": 94, "target": 97}, {"source": 94, "target": 98}, {"source": 94, "target": 99}, {"source": 94, "target": 100}, {"source": 94, "target": 101}, {"source": 94, "target": 102}, {"source": 1, "target": 103}, {"source": 103, "target": 104}, {"source": 104, "target": 105}, {"source": 104, "target": 106}, {"source": 104, "target": 107}, {"source": 104, "target": 108}, {"source": 104, "target": 109}, {"source": 104, "target": 110}, {"source": 104, "target": 111}, {"source": 104, "target": 112}, {"source": 104, "target": 113}, {"source": 104, "target": 114}, {"source": 104, "target": 115}];
-
-
-// ============================================================
-// DOM
-// ============================================================
-
-const map =
-    document.getElementById(
-        "map"
-    );
-
-
-const world =
-    document.getElementById(
-        "world"
-    );
-
-
-const lineGroup =
-    document.getElementById(
-        "lines"
-    );
-
-
-const tooltip =
-    document.getElementById(
-        "tooltip"
-    );
-
-
-// ============================================================
-// STATE
-// ============================================================
-
-let rootOpen = false;
-
-let zoom = 0.65;
-
-let panX = 0;
-
-let panY = 0;
-
-
-// ============================================================
-// LOOKUPS
-// ============================================================
-
-const byId = {};
-
-const children = {};
-
-
-nodes.forEach(
-    function(node) {
-
-        byId[node.id] =
-            node;
-
-        children[node.id] =
-            [];
-
-    }
-);
-
-
-links.forEach(
-    function(link) {
-
-        children[
-            link.source
-        ].push(
-            link.target
-        );
-
-    }
-);
-
-
-// ============================================================
-// OPEN STATE
-// ============================================================
-
-const open = {};
-
-
-nodes.forEach(
-    function(node) {
-
-        open[node.id] =
-            false;
-
-    }
-);
-
-
-// ============================================================
-// ELEMENTS
-// ============================================================
-
-const elements = {};
-
-
-// ============================================================
-// CREATE NODE ELEMENTS
-// ============================================================
-
-nodes.forEach(
-    function(node) {
-
-        const element =
-            document.createElement(
-                "div"
-            );
-
-
-        element.className =
-            "node level" +
-            node.level;
-
-
-        element.textContent =
-            node.label;
-
-
-        element.dataset.id =
-            node.id;
-
-
-        // ----------------------------------------------------
-        // MODULE STATUS
-        // ----------------------------------------------------
-
-        if (
-            node.level === 4
-        ) {
-
-            const status =
-                (
-                    node.status ||
-                    ""
-                ).toLowerCase();
-
-
-            if (
-                status.includes(
-                    "mandatory"
-                )
-            ) {
-
-                element.classList.add(
-                    "mandatory"
-                );
-
-            }
-
-
-            if (
-                status.includes(
-                    "optional"
-                )
-            ) {
-
-                element.classList.add(
-                    "optional"
-                );
-
-            }
-
-
-            if (
-                node.related_to
-            ) {
-
-                element.classList.add(
-                    "related"
-                );
-
-            }
-
+    <script>
+        function toggleVisibility(id) { 
+            var el = document.getElementById(id);
+            el.style.display = (el.style.display === 'none') ? (el.classList.contains('card-container') ? 'grid' : 'block') : 'none'; 
         }
-
-
-        world.appendChild(
-            element
-        );
-
-
-        elements[node.id] =
-            element;
-
-
-        // ====================================================
-        // CLICK
-        // ====================================================
-
-        element.addEventListener(
-            "click",
-            function(event) {
-
-                event.preventDefault();
-
-                event.stopPropagation();
-
-
-                const id =
-                    Number(
-                        element.dataset.id
-                    );
-
-
-                const node =
-                    byId[id];
-
-
-                console.log(
-                    "NODE CLICKED:",
-                    id,
-                    node.label,
-                    "LEVEL:",
-                    node.level
-                );
-
-
-                // --------------------------------------------
-                // ROOT
-                // --------------------------------------------
-
-                if (
-                    id === 0
-                ) {
-
-                    rootOpen =
-                        !rootOpen;
-
-
-                    console.log(
-                        "ROOT:",
-                        rootOpen
-                    );
-
-
-                    if (
-                        !rootOpen
-                    ) {
-
-                        nodes.forEach(
-                            function(n) {
-
-                                open[n.id] =
-                                    false;
-
-                            }
-                        );
-
-                    }
-
-
-                    render();
-
-                    return;
-
-                }
-
-
-                // --------------------------------------------
-                // LEAF / MODULE
-                // --------------------------------------------
-
-                if (
-                    children[id].length === 0
-                ) {
-
-                    console.log(
-                        "LEAF NODE - NO CHILDREN"
-                    );
-
-                    return;
-
-                }
-
-
-                // --------------------------------------------
-                // TOGGLE THIS NODE
-                // --------------------------------------------
-
-                open[id] =
-                    !open[id];
-
-
-                console.log(
-                    "NODE OPEN:",
-                    node.label,
-                    open[id]
-                );
-
-
-                // --------------------------------------------
-                // IMPORTANT:
-                //
-                // When opening a node, don't automatically
-                // close anything else. This allows multiple
-                // stages to remain open simultaneously.
-                // --------------------------------------------
-
-                render();
-
-            }
-        );
-
-
-        // ----------------------------------------------------
-        // PREVENT DRAGGING FROM NODE
-        // ----------------------------------------------------
-
-        element.addEventListener(
-            "pointerdown",
-            function(event) {
-
-                event.stopPropagation();
-
-            }
-        );
-
-
-        // ----------------------------------------------------
-        // TOOLTIP
-        // ----------------------------------------------------
-
-        element.addEventListener(
-            "mouseenter",
-            function(event) {
-
-                if (
-                    node.level === 4
-                ) {
-
-                    showTooltip(
-                        node,
-                        event
-                    );
-
-                }
-
-            }
-        );
-
-
-        element.addEventListener(
-            "mousemove",
-            function(event) {
-
-                if (
-                    node.level === 4
-                ) {
-
-                    moveTooltip(
-                        event
-                    );
-
-                }
-
-            }
-        );
-
-
-        element.addEventListener(
-            "mouseleave",
-            function() {
-
-                tooltip.style.display =
-                    "none";
-
-            }
-        );
-
-    }
-);
-
-
-// ============================================================
-// CONNECTIONS
-// ============================================================
-
-const lineElements = {};
-
-
-links.forEach(
-    function(link) {
-
-        const path =
-            document.createElementNS(
-                "http://www.w3.org/2000/svg",
-                "path"
-            );
-
-
-        path.classList.add(
-            "line"
-        );
-
-
-        path.classList.add(
-            "line" +
-            byId[
-                link.target
-            ].level
-        );
-
-
-        lineGroup.appendChild(
-            path
-        );
-
-
-        lineElements[
-            link.source +
-            "-" +
-            link.target
-        ] =
-            path;
-
-    }
-);
-
-
-// ============================================================
-// VISIBILITY
-// ============================================================
-
-function visible(
-    nodeId
-) {
-
-    // --------------------------------------------------------
-    // ROOT
-    // --------------------------------------------------------
-
-    if (
-        nodeId === 0
-    ) {
-
-        return true;
-
-    }
-
-
-    // --------------------------------------------------------
-    // ROOT CLOSED
-    // --------------------------------------------------------
-
-    if (
-        !rootOpen
-    ) {
-
-        return false;
-
-    }
-
-
-    let node =
-        byId[nodeId];
-
-
-    // --------------------------------------------------------
-    // WALK TOWARD ROOT
-    // --------------------------------------------------------
-
-    while (
-        node.parent !== null
-    ) {
-
-        const parentId =
-            node.parent;
-
-
-        // --------------------------------------------
-        // DIRECT CHILD OF ROOT
-        // --------------------------------------------
-
-        if (
-            parentId === 0
-        ) {
-
-            return rootOpen;
-
-        }
-
-
-        // --------------------------------------------
-        // ALL OTHER LEVELS
-        // --------------------------------------------
-
-        if (
-            open[parentId] !== true
-        ) {
-
-            return false;
-
-        }
-
-
-        node =
-            byId[parentId];
-
-    }
-
-
-    return true;
-
-}
-
-
-// ============================================================
-// BRANCH SIZE
-// ============================================================
-
-function branchSize(
-    nodeId
-) {
-
-    const kids =
-        children[nodeId];
-
-
-    if (
-        kids.length === 0
-    ) {
-
-        return 1;
-
-    }
-
-
-    if (
-        !open[nodeId]
-    ) {
-
-        return 1;
-
-    }
-
-
-    let total = 0;
-
-
-    kids.forEach(
-        function(id) {
-
-            total +=
-                branchSize(id);
-
-        }
-    );
-
-
-    return Math.max(
-        1,
-        total
-    );
-
-}
-
-
-// ============================================================
-// LAYOUT
-// ============================================================
-
-function calculateLayout() {
-
-    byId[0].x = 0;
-
-    byId[0].y = 0;
-
-
-    if (
-        !rootOpen
-    ) {
-
-        return;
-
-    }
-
-
-    const categories =
-        children[0];
-
-
-    const right =
-        categories.filter(
-            function(id, index) {
-
-                return index % 2 === 0;
-
-            }
-        );
-
-
-    const left =
-        categories.filter(
-            function(id, index) {
-
-                return index % 2 !== 0;
-
-            }
-        );
-
-
-    layoutCategories(
-        right,
-        1
-    );
-
-
-    layoutCategories(
-        left,
-        -1
-    );
-
-}
-
-
-// ============================================================
-// CATEGORY LAYOUT
-// ============================================================
-
-function layoutCategories(
-    ids,
-    direction
-) {
-
-    if (
-        ids.length === 0
-    ) {
-
-        return;
-
-    }
-
-
-    const spacing =
-        400;
-
-
-    let totalUnits = 0;
-
-
-    ids.forEach(
-        function(id) {
-
-            totalUnits +=
-                branchSize(id);
-
-        }
-    );
-
-
-    const totalHeight =
-        (
-            totalUnits - 1
-        ) *
-        spacing;
-
-
-    let y =
-        -totalHeight / 2;
-
-
-    ids.forEach(
-        function(id) {
-
-            const size =
-                branchSize(id);
-
-
-            const height =
-                (
-                    size - 1
-                ) *
-                spacing;
-
-
-            const node =
-                byId[id];
-
-
-            node.x =
-                direction *
-                390;
-
-
-            node.y =
-                y +
-                height / 2;
-
-
-            y +=
-                height +
-                spacing;
-
-
-            layoutChildren(
-                id,
-                direction
-            );
-
-        }
-    );
-
-}
-
-
-// ============================================================
-// CHILDREN LAYOUT
-// ============================================================
-
-function layoutChildren(
-    parentId,
-    direction
-) {
-
-    if (
-        !open[parentId]
-    ) {
-
-        return;
-
-    }
-
-
-    const parent =
-        byId[parentId];
-
-
-    const kids =
-        children[parentId];
-
-
-    if (
-        kids.length === 0
-    ) {
-
-        return;
-
-    }
-
-
-    // ========================================================
-    // STAGE
-    //
-    // This is the important fix.
-    //
-    // A stage is LEVEL 3.
-    // When it is open, its LEVEL 4 modules are explicitly
-    // laid out in a 3-column grid.
-    // ========================================================
-
-    if (
-        parent.level === 3
-    ) {
-
-        layoutModules(
-            parent,
-            kids,
-            direction
-        );
-
-
-        return;
-
-    }
-
-
-    // ========================================================
-    // CATEGORY / SUBCATEGORY
-    // ========================================================
-
-    const spacing =
-        parent.level === 1
-            ? 330
-            : 280;
-
-
-    let totalUnits = 0;
-
-
-    kids.forEach(
-        function(id) {
-
-            totalUnits +=
-                branchSize(id);
-
-        }
-    );
-
-
-    const totalHeight =
-        (
-            totalUnits - 1
-        ) *
-        spacing;
-
-
-    let y =
-        parent.y -
-        totalHeight / 2;
-
-
-    kids.forEach(
-        function(id) {
-
-            const size =
-                branchSize(id);
-
-
-            const height =
-                (
-                    size - 1
-                ) *
-                spacing;
-
-
-            const child =
-                byId[id];
-
-
-            child.x =
-                parent.x +
-                direction *
-                (
-                    parent.level === 1
-                        ? 285
-                        : 245
-                );
-
-
-            child.y =
-                y +
-                height / 2;
-
-
-            y +=
-                height +
-                spacing;
-
-
-            layoutChildren(
-                id,
-                direction
-            );
-
-        }
-    );
-
-}
-
-
-// ============================================================
-// MODULE GRID
-// ============================================================
-
-function layoutModules(
-    stage,
-    moduleIds,
-    direction
-) {
-
-    const columns =
-        3;
-
-
-    const horizontalGap =
-        140;
-
-
-    const verticalGap =
-        130;
-
-
-    // Keep modules well clear of the stage.
-
-    const startDistance =
-        235;
-
-
-    const rows =
-        Math.ceil(
-            moduleIds.length /
-            columns
-        );
-
-
-    const totalHeight =
-        (
-            rows - 1
-        ) *
-        verticalGap;
-
-
-    const startY =
-        stage.y -
-        totalHeight / 2;
-
-
-    moduleIds.forEach(
-        function(id, index) {
-
-            const module =
-                byId[id];
-
-
-            const row =
-                Math.floor(
-                    index /
-                    columns
-                );
-
-
-            const column =
-                index %
-                columns;
-
-
-            module.x =
-                stage.x +
-                direction *
-                (
-                    startDistance +
-                    (
-                        column *
-                        horizontalGap
-                    )
-                );
-
-
-            module.y =
-                startY +
-                (
-                    row *
-                    verticalGap
-                );
-
-        }
-    );
-
-}
-
-
-// ============================================================
-// CONNECTION PATH
-// ============================================================
-
-function makePath(
-    source,
-    target
-) {
-
-    const direction =
-        target.x >= source.x
-            ? 1
-            : -1;
-
-
-    const distance =
-        Math.abs(
-            target.x -
-            source.x
-        );
-
-
-    const curve =
-        Math.max(
-            70,
-            distance * 0.4
-        );
-
-
-    const c1x =
-        source.x +
-        direction *
-        curve;
-
-
-    const c2x =
-        target.x -
-        direction *
-        curve;
-
-
-    return (
-        "M " +
-        source.x +
-        " " +
-        source.y +
-        " C " +
-        c1x +
-        " " +
-        source.y +
-        ", " +
-        c2x +
-        " " +
-        target.y +
-        ", " +
-        target.x +
-        " " +
-        target.y
-    );
-
-}
-
-
-// ============================================================
-// RENDER
-// ============================================================
-
-function render() {
-
-    calculateLayout();
-
-
-    // --------------------------------------------------------
-    // NODES
-    // --------------------------------------------------------
-
-    nodes.forEach(
-        function(node) {
-
-            const element =
-                elements[node.id];
-
-
-            element.style.left =
-                node.x + "px";
-
-
-            element.style.top =
-                node.y + "px";
-
-
-            element.classList.toggle(
-                "hidden",
-                !visible(node.id)
-            );
-
-        }
-    );
-
-
-    // --------------------------------------------------------
-    // CONNECTIONS
-    // --------------------------------------------------------
-
-    links.forEach(
-        function(link) {
-
-            const source =
-                byId[
-                    link.source
-                ];
-
-
-            const target =
-                byId[
-                    link.target
-                ];
-
-
-            const path =
-                lineElements[
-                    link.source +
-                    "-" +
-                    link.target
-                ];
-
-
-            const show =
-                visible(source.id) &&
-                visible(target.id);
-
-
-            path.style.display =
-                show
-                    ? "block"
-                    : "none";
-
-
-            if (
-                show
-            ) {
-
-                path.setAttribute(
-                    "d",
-                    makePath(
-                        source,
-                        target
-                    )
-                );
-
-            }
-
-        }
-    );
-
-
-    applyTransform();
-
-}
-
-
-// ============================================================
-// TRANSFORM
-// ============================================================
-
-function applyTransform() {
-
-    world.style.transform =
-        "translate(" +
-        panX +
-        "px, " +
-        panY +
-        "px) scale(" +
-        zoom +
-        ")";
-
-}
-
-
-// ============================================================
-// CENTRE
-// ============================================================
-
-function centre() {
-
-    panX =
-        map.clientWidth / 2;
-
-
-    panY =
-        map.clientHeight / 2;
-
-
-    applyTransform();
-
-}
-
-
-// ============================================================
-// RESET
-// ============================================================
-
-function resetMap() {
-
-    rootOpen =
-        false;
-
-
-    nodes.forEach(
-        function(node) {
-
-            open[node.id] =
-                false;
-
-        }
-    );
-
-
-    elements[0]
-        .classList.add(
-            "collapsed"
-        );
-
-
-    zoom =
-        0.65;
-
-
-    centre();
-
-    render();
-
-}
-
-
-// ============================================================
-// FIT
-// ============================================================
-
-function fit() {
-
-    zoom =
-        0.45;
-
-
-    centre();
-
-    render();
-
-}
-
-
-// ============================================================
-// BUTTONS
-// ============================================================
-
-document
-    .getElementById("plus")
-    .addEventListener(
-        "click",
-        function(event) {
-
-            event.stopPropagation();
-
-
-            zoom =
-                Math.min(
-                    3,
-                    zoom * 1.15
-                );
-
-
-            applyTransform();
-
-        }
-    );
-
-
-document
-    .getElementById("minus")
-    .addEventListener(
-        "click",
-        function(event) {
-
-            event.stopPropagation();
-
-
-            zoom =
-                Math.max(
-                    .2,
-                    zoom / 1.15
-                );
-
-
-            applyTransform();
-
-        }
-    );
-
-
-document
-    .getElementById("fit")
-    .addEventListener(
-        "click",
-        function(event) {
-
-            event.stopPropagation();
-
-            fit();
-
-        }
-    );
-
-
-document
-    .getElementById("reset")
-    .addEventListener(
-        "click",
-        function(event) {
-
-            event.stopPropagation();
-
-            resetMap();
-
-        }
-    );
-
-
-// ============================================================
-// DRAGGING
-// ============================================================
-
-let dragging = false;
-
-let startX = 0;
-
-let startY = 0;
-
-let initialPanX = 0;
-
-let initialPanY = 0;
-
-
-map.addEventListener(
-    "pointerdown",
-    function(event) {
-
-        if (
-            event.target.closest(
-                ".node"
-            )
-        ) {
-
-            return;
-
-        }
-
-
-        dragging =
-            true;
-
-
-        startX =
-            event.clientX;
-
-
-        startY =
-            event.clientY;
-
-
-        initialPanX =
-            panX;
-
-
-        initialPanY =
-            panY;
-
-
-        map.classList.add(
-            "dragging"
-        );
-
-
-        map.setPointerCapture(
-            event.pointerId
-        );
-
-    }
-);
-
-
-map.addEventListener(
-    "pointermove",
-    function(event) {
-
-        if (
-            !dragging
-        ) {
-
-            return;
-
-        }
-
-
-        panX =
-            initialPanX +
-            (
-                event.clientX -
-                startX
-            );
-
-
-        panY =
-            initialPanY +
-            (
-                event.clientY -
-                startY
-            );
-
-
-        applyTransform();
-
-    }
-);
-
-
-map.addEventListener(
-    "pointerup",
-    function(event) {
-
-        dragging =
-            false;
-
-
-        map.classList.remove(
-            "dragging"
-        );
-
-
-        try {
-
-            map.releasePointerCapture(
-                event.pointerId
-            );
-
-        }
-        catch (error) {
-
-        }
-
-    }
-);
-
-
-map.addEventListener(
-    "pointercancel",
-    function() {
-
-        dragging =
-            false;
-
-
-        map.classList.remove(
-            "dragging"
-        );
-
-    }
-);
-
-
-// ============================================================
-// MOUSE WHEEL ZOOM
-// ============================================================
-
-map.addEventListener(
-    "wheel",
-    function(event) {
-
-        event.preventDefault();
-
-
-        const rect =
-            map.getBoundingClientRect();
-
-
-        const mouseX =
-            event.clientX -
-            rect.left;
-
-
-        const mouseY =
-            event.clientY -
-            rect.top;
-
-
-        const oldZoom =
-            zoom;
-
-
-        const factor =
-            event.deltaY < 0
-                ? 1.1
-                : .9;
-
-
-        zoom =
-            Math.max(
-                .2,
-                Math.min(
-                    3,
-                    zoom * factor
-                )
-            );
-
-
-        panX =
-            mouseX -
-            (
-                mouseX -
-                panX
-            ) *
-            (
-                zoom /
-                oldZoom
-            );
-
-
-        panY =
-            mouseY -
-            (
-                mouseY -
-                panY
-            ) *
-            (
-                zoom /
-                oldZoom
-            );
-
-
-        applyTransform();
-
-    },
-    {
-        passive: false
-    }
-);
-
-
-// ============================================================
-// TOOLTIP
-// ============================================================
-
-function showTooltip(
-    node,
-    event
-) {
-
-    let content =
-        "<div class='tooltip-title'>" +
-        escapeHTML(
-            node.label
-        ) +
-        "</div>";
-
-
-    if (
-        node.status
-    ) {
-
-        content +=
-            "<div>" +
-            escapeHTML(
-                node.status
-            ) +
-            "</div>";
-
-    }
-
-
-    if (
-        node.description
-    ) {
-
-        content +=
-            "<div style='margin-top:8px'>" +
-            escapeHTML(
-                node.description
-            ) +
-            "</div>";
-
-    }
-
-
-    if (
-        node.related_to
-    ) {
-
-        content +=
-            "<div class='tooltip-related'>" +
-
-            "<strong>Related to:</strong><br>" +
-
-            escapeHTML(
-                node.related_to
-            );
-
-
-        if (
-            node.related_path
-        ) {
-
-            content +=
-                "<br><small>" +
-                escapeHTML(
-                    node.related_path
-                ) +
-                "</small>";
-
-        }
-
-
-        content +=
-            "</div>";
-
-    }
-
-
-    tooltip.innerHTML =
-        content;
-
-
-    tooltip.style.display =
-        "block";
-
-
-    moveTooltip(
-        event
-    );
-
-}
-
-
-function moveTooltip(
-    event
-) {
-
-    let x =
-        event.clientX +
-        15;
-
-
-    let y =
-        event.clientY +
-        15;
-
-
-    const rect =
-        tooltip.getBoundingClientRect();
-
-
-    if (
-        x + rect.width >
-        window.innerWidth
-    ) {
-
-        x =
-            event.clientX -
-            rect.width -
-            15;
-
-    }
-
-
-    if (
-        y + rect.height >
-        window.innerHeight
-    ) {
-
-        y =
-            event.clientY -
-            rect.height -
-            15;
-
-    }
-
-
-    tooltip.style.left =
-        x + "px";
-
-
-    tooltip.style.top =
-        y + "px";
-
-}
-
-
-function escapeHTML(
-    value
-) {
-
-    const div =
-        document.createElement(
-            "div"
-        );
-
-
-    div.textContent =
-        value;
-
-
-    return div.innerHTML;
-
-}
-
-
-// ============================================================
-// RESIZE
-// ============================================================
-
-window.addEventListener(
-    "resize",
-    function() {
-
-        centre();
-
-        render();
-
-    }
-);
-
-
-// ============================================================
-// INITIAL STATE
-// ============================================================
-
-rootOpen =
-    false;
-
-
-nodes.forEach(
-    function(node) {
-
-        open[node.id] =
-            false;
-
-    }
-);
-
-
-elements[0]
-    .classList.add(
-        "collapsed"
-    );
-
-
-centre();
-
-render();
-
-
-console.log(
-    "================================"
-);
-
-console.log(
-    "COLLABORATION MIND MAP READY"
-);
-
-console.log(
-    "ROOT CLOSED"
-);
-
-console.log(
-    "Click root -> Categories"
-);
-
-console.log(
-    "Click category -> Subcategories"
-);
-
-console.log(
-    "Click subcategory -> Stages"
-);
-
-console.log(
-    "Click stage -> 3-column Modules"
-);
-
-console.log(
-    "================================"
-);
-
-
-</script>
-
+    </script>
 </body>
-
 </html>
